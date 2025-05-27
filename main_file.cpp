@@ -31,6 +31,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "lodepng.h"
 #include "shaderprogram.h"
 #include "myCube.h"
+#include "model.h"
+#include "cube.h"
 #include "camera.h"
 #include "terrain.h"
 #include "myTeapot.h"
@@ -53,11 +55,11 @@ Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
 
 //Odkomentuj, żeby rysować kostkę
-float* vertices = teren.getVertices();
-float* normals = teren.getNormals();
-float* texCoords = myCubeTexCoords;
-float* colors = myCubeColors;
-int vertexCount = teren.getVerticesCount();
+//float* vertices = teren.getVertices();
+//float* normals = teren.getNormals();
+//float* texCoords = myCubeTexCoords;
+//float* colors = myCubeColors;
+//int vertexCount = teren.getVerticesCount();
 
 
 //Odkomentuj, żeby rysować czajnik
@@ -157,55 +159,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, Camera *camera) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	//Stara kamera statyczna
-	
-
-
-
-
-    glm::mat4 M=glm::mat4(1.0f);
-	M=glm::rotate(M,angle_y - PI/2,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
-	M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
-    sp->use();//Aktywacja programu cieniującego
-    //Przeslij parametry programu cieniującego do karty graficznej
-
-	
-	
-    
-    glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
-	glUniform4f(sp->u("lp"), 0, 0, -6, 1);
-	
-	//textura
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tex1);
-
-
-    glEnableVertexAttribArray(sp->a("vertex"));  //Włącz przesyłanie danych do atrybutu vertex
-    glVertexAttribPointer(sp->a("vertex"),4,GL_FLOAT,false,0,vertices); //Wskaż tablicę z danymi dla atrybutu vertex
-
-	//glEnableVertexAttribArray(sp->a("color"));  //Włącz przesyłanie danych do atrybutu color
-	//glVertexAttribPointer(sp->a("color"), 4, GL_FLOAT, false, 0, colors); //Wskaż tablicę z danymi dla atrybutu color
-
-	glEnableVertexAttribArray(sp->a("normal"));  //Włącz przesyłanie danych do atrybutu normal
-	glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, normals); //Wskaż tablicę z danymi dla atrybutu normal
-
-	glEnableVertexAttribArray(sp->a("texCoord0"));
-	glVertexAttribPointer(sp->a("texCoord0"),2, GL_FLOAT, false, 0, texCoords);
-	glEnableVertexAttribArray(sp->a("texCoord1"));
-	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, texCoords);
-	glUniform1i(sp->u("textureMap0"), 0);
-	glUniform1i(sp->u("textureMap1"), 1);
-	
-
-    glDrawArrays(GL_TRIANGLES,0,vertexCount); //Narysuj obiekt
-
-    glDisableVertexAttribArray(sp->a("vertex"));  //Wyłącz przesyłanie danych do atrybutu vertex
-	glDisableVertexAttribArray(sp->a("color"));  //Wyłącz przesyłanie danych do atrybutu color
-	glDisableVertexAttribArray(sp->a("normal"));  //Wyłącz przesyłanie danych do atrybutu normal
-	glDisableVertexAttribArray(sp->a("texCoord0"));
+	teren.drawTerrain(sp, tex0, tex1, angle_x, angle_y);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
