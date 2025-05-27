@@ -21,7 +21,9 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="cube.h" />
     <ClInclude Include="lodepng.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="myCube.h" />
     <ClInclude Include="myTeapot.h" />
@@ -29,8 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cube.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="terrain.cpp" />
   </ItemGroup>

@@ -1,4 +1,7 @@
-﻿  terrain.cpp
+﻿  main_file.cpp
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\main_file.cpp(256,25): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\main_file.cpp(257,25): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
+  terrain.cpp
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(24,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(25,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(30,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
@@ -15,4 +18,5 @@ C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(78,24): war
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(79,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(94,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(95,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+  Generowanie kodu...
   gkiw_st_10_win.vcxproj -> C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\x64\Debug\gkiw_st_10_win.exe

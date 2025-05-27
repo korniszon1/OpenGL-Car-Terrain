@@ -19,17 +19,17 @@ class Terrain
 	static const int _SIZE = 3*4*2* _N;
 	float _TerrainVertices[_SIZE] {0.0f};
 	float _TerrainNormals[_SIZE]{ 0.0f };
-
+	//ToDo
+	//Zaaktualizowac to by to sie dzialo automatycznie
+	static float _TerrainTexCoords[];
 public:
 	Terrain();
 	void showVertices();
 	float* getVertices();
 	float* getNormals();
 	int getVerticesCount();
-
-protected:
-	//void LoadHeightMapFile(const char* pFilename);
-
+	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float& angle_x, float& angle_y);
+	
 };
 
 #endif
