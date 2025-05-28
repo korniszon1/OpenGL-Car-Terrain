@@ -26,7 +26,8 @@ Terrain::Terrain()
 	}
 	
 	
-
+	//ToDo
+	//zoptymalizowac
 	for (int i = 0; i < _SIZE; i = i + 4)
 	{
 		if (i % (int)(24 * _N) == 0) { y++; x = 0; }
