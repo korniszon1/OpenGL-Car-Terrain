@@ -17,11 +17,11 @@
 class Camera
 {
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, -6.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 rotation = glm::vec3(4.0f, 0.0f, 1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 V = glm::mat4(1.0f);
 
-	float speed = 0.05f;
+	float speed = 1.20f;
 	float sensitivity = 20.0f;
 
 	int width;

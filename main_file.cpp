@@ -38,6 +38,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "myTeapot.h"
 
 
+
+
+
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
@@ -201,9 +204,11 @@ int main(void)
 	float pos_y = 0;
 	glfwSetTime(0); //Zeruj timer
 
-	
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
+
+
+		
         angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
         angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 		if(pos_y>-3.0)pos_y-=gravity * glfwGetTime();
@@ -215,6 +220,7 @@ int main(void)
         glfwSetTime(0); //Zeruj timer
 		drawScene(window,angle_x,angle_y, pos_y, camera); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+
 	}
 
 	freeOpenGLProgram(window);

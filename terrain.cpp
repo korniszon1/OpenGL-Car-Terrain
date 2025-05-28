@@ -15,13 +15,20 @@ Terrain::Terrain()
 	float z[_N + 2][_N + 2]{0.0f};
 	float a = 1.0f;
 	//WIP
+	// Im mniejsze tym wieksze
+	const float height = 2.0f;
+	const float curve = 5.0f;
+	const float heightFactor = (1.0f / (float)(_N * _N * _N * _N / (_N /( height))));
 	for (int i = 0; i < _N +2; i++)
 	{
 		for (int j = 0; j < _N + 2; j++)
 		{
 			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 4);
-			
-			z[i][j] = (noise - 1) * 10;
+			//(noise) * 10 *
+			float zeroI = _N + 2 - i;
+			float zeroJ = _N+2 - j;
+			z[i][j] = noise * heightFactor * i * i * zeroI * zeroI * heightFactor * j * j * zeroJ * zeroJ - curve*10;
+			//printf("X: %i Z: %f \n",i, z[i][j]);
 		}
 	}
 	
@@ -117,7 +124,8 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float &
 {
 	glm::mat4 M = glm::mat4(1.0f);
 	M = glm::rotate(M, angle_y - PI / 2, glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
-	M = glm::rotate(M, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); //Wylicz macierz modelu
+	M = glm::rotate(M, angle_x, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::scale(M, glm::vec3(5.0f, 5.0f,5.0f));
 	sp->use();//Aktywacja programu cieniuj¹cego
 	//Przeslij parametry programu cieniuj¹cego do karty graficznej
 
