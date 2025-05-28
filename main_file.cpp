@@ -30,9 +30,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-#include "myCube.h"
-#include "model.h"
-#include "cube.h"
+//#include "myCube.h"
+//#include "model.h"
+//#include "cube.h"
 #include "camera.h"
 #include "terrain.h"
 #include "myTeapot.h"
@@ -41,7 +41,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
-
+float gravity = 0.5;
 
 
 
@@ -55,11 +55,11 @@ Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
 
 //Odkomentuj, żeby rysować kostkę
-//float* vertices = teren.getVertices();
-//float* normals = teren.getNormals();
-//float* texCoords = myCubeTexCoords;
-//float* colors = myCubeColors;
-//int vertexCount = teren.getVerticesCount();
+float* vertices = myCubeVertices;
+float* normals = myCubeNormals;
+float* texCoords = myCubeTexCoords;
+float* colors = myCubeColors;
+int vertexCount = myCubeVertexCount;
 
 
 //Odkomentuj, żeby rysować czajnik
@@ -140,7 +140,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 	tex0 = readTexture("metal.png");
 	tex1 = readTexture("sky.png");
-	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+	sp=new ShaderProgram("v_simplest.glsl","g_simplest.glsl", "f_simplest.glsl");
 }
 
 
@@ -155,7 +155,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle_x,float angle_y, Camera *camera) {
+void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_y, Camera *camera) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -198,6 +198,7 @@ int main(void)
 	//Główna pętla
 	float angle_x=0; //Aktualny kąt obrotu obiektu
 	float angle_y=0; //Aktualny kąt obrotu obiektu
+	float pos_y = 0;
 	glfwSetTime(0); //Zeruj timer
 
 	
@@ -205,14 +206,14 @@ int main(void)
 	{
         angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
         angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-
+		if(pos_y>-3.0)pos_y-=gravity * glfwGetTime();
 		
 		camera->keyCallback(window);
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 500.0f);
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
         glfwSetTime(0); //Zeruj timer
-		drawScene(window,angle_x,angle_y, camera); //Wykonaj procedurę rysującą
+		drawScene(window,angle_x,angle_y, pos_y, camera); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 

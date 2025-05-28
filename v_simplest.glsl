@@ -22,6 +22,7 @@ out vec4 n;
 out vec4 v;
 out vec2 iTexCoord0;
 out vec2 iTexCoord1;
+out vec4 gColor;
 
 void main(void) {
     n=normalize(V*M*normal);
@@ -31,6 +32,7 @@ void main(void) {
     n = normalize(V * M * normal);//znormalizowany wektor normalny w przestrzeni oka
     v = normalize(vec4(0, 0, 0, 1) - V * M * vertex); //Wektor do obserwatora w przestrzeni oka
     iC = color;
+    gColor = color;
     iTexCoord0 = texCoord0;
     gl_Position=P*V*M*vertex;
 }

@@ -42,6 +42,9 @@
     <ClInclude Include="model.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="PerlinNoise.hpp">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">
@@ -71,6 +74,9 @@
       <Filter>Pliki zasobów</Filter>
     </None>
     <None Include="v_simplest.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="g_simplest.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
   </ItemGroup>

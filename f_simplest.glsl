@@ -10,6 +10,7 @@ in vec4 v;
 
 in vec2 iTexCoord0;
 in vec2 iTexCoord1;
+in vec4 grid;
 
 uniform sampler2D textureMap0;
 uniform sampler2D textureMap1;

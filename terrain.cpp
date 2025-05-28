@@ -1,25 +1,35 @@
 #include "terrain.h"
 #include <cmath>
+#include "PerlinNoise.hpp"
 
 Terrain::Terrain()
 {
+	const siv::PerlinNoise::seed_type seed = 123456u;
+
+	const siv::PerlinNoise perlin{ seed };
+
+
+
 	int x = 0;
 	int y = 0;
-	float z[12][12]{0.0f};
+	float z[_N + 2][_N + 2]{0.0f};
 	float a = 1.0f;
 	//WIP
-	/*for (int i = 0; i < 10; i++)
+	for (int i = 0; i < _N +2; i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < _N + 2; j++)
 		{
-			z[i][j] = i;
+			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 4);
+			
+			z[i][j] = (noise - 1) * 10;
 		}
-	}*/
+	}
+	
 	
 
 	for (int i = 0; i < _SIZE; i = i + 4)
 	{
-		if (i % (int)(24 * std::sqrt(_N)) == 0) { y++; x = 0; }
+		if (i % (int)(24 * _N) == 0) { y++; x = 0; }
 		//printf("I = %i \n", i);
 		_TerrainVertices[i] = x;
 		_TerrainVertices[i + 1] = y;
@@ -40,19 +50,20 @@ Terrain::Terrain()
 		
 		_TerrainVertices[i] = _TerrainVertices[i - 4];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 3];
-		_TerrainVertices[i + 2] = z[x][y];
+		_TerrainVertices[i + 2] = _TerrainVertices[i - 2];
 		_TerrainVertices[i + 3] = a;
 		i = i + 4;
 		_TerrainVertices[i] = _TerrainVertices[i - 12];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 11];
-		_TerrainVertices[i + 2] = z[x][y];
+		_TerrainVertices[i + 2] = _TerrainVertices[i - 10];
 		_TerrainVertices[i + 3] = a;
 		i = i + 4;
 		//printf("--I = %i \n", i);
 		_TerrainVertices[i] = ++x;
-		_TerrainVertices[i + 1] = y--;
+		_TerrainVertices[i + 1] = y;
 		_TerrainVertices[i + 2] = z[x][y];
 		_TerrainVertices[i + 3] = a;
+		y--;
 		//printf("I = %i \n", i);
 		//showVertices();
 	}
@@ -63,7 +74,7 @@ Terrain::Terrain()
 	printf("S: %i", (int)(12 * std::sqrt(_N)));
 	for (int i = 0; i < _SIZE; i = i + 4)
 	{
-		if (i % (int)(24 * std::sqrt(_N) ) == 0) { y++; x = 0; }
+		if (i % (int)(24 * _N ) == 0) { y++; x = 0; }
 		//printf("I = %i \n", i);
 		_TerrainNormals[i] = x;
 		_TerrainNormals[i + 1] = y;
@@ -82,12 +93,12 @@ Terrain::Terrain()
 		i = i + 4;
 		_TerrainNormals[i] = _TerrainNormals[i - 4];
 		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
-		_TerrainNormals[i + 2] = z[x][y];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
 		_TerrainNormals[i + 3] = a;
 		i = i + 4;
 		_TerrainNormals[i] = _TerrainNormals[i - 12];
 		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
-		_TerrainNormals[i + 2] = z[x][y];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
 		_TerrainNormals[i + 3] = a;
 		i = i + 4;
 		//printf("--I = %i \n", i);

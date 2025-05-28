@@ -2,6 +2,7 @@
 #ifndef TERRAIN_CLASS_H
 #define TERRAIN_CLASS_H
 #include <GL/glew.h>
+#include <vector>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,10 +16,12 @@
 
 class Terrain
 {
-	static const int _N = 100;
-	static const int _SIZE = 3*4*2* _N;
+	static const unsigned int _N = 200;
+	static const unsigned int _SIZE = 3*4*2* _N*_N;
 	float _TerrainVertices[_SIZE] {0.0f};
 	float _TerrainNormals[_SIZE]{ 0.0f };
+
+
 	//ToDo
 	//Zaaktualizowac to by to sie dzialo automatycznie
 	static float _TerrainTexCoords[];
