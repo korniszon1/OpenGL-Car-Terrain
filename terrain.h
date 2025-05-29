@@ -24,7 +24,7 @@ class Terrain
 
 	//ToDo
 	//Zaaktualizowac to by to sie dzialo automatycznie
-	static float _TerrainTexCoords[];
+	static float _TerrainTexCoords[_N * _N * 12];
 public:
 	Terrain();
 	void showVertices();

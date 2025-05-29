@@ -16,8 +16,8 @@ uniform sampler2D textureMap0;
 uniform sampler2D textureMap1;
 
 void main(void) {
-	//vec4 kd = texture(textureMap0,iTexCoord0);
-	vec4 kd = mix(texture(textureMap0,iTexCoord0),texture(textureMap1,iTexCoord1),0.1);
+	vec4 kd = texture(textureMap0,iTexCoord0);
+	//vec4 kd = mix(texture(textureMap0,iTexCoord0),texture(textureMap1,iTexCoord1),0.1);
 	vec4 ks = vec4(1,1,1,1);
 	
 	//ks = texture(textureMap1,iTexCoord0);

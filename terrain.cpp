@@ -43,79 +43,75 @@ Terrain::Terrain()
 		_TerrainVertices[i + 1] = y;
 		_TerrainVertices[i + 2] = z[x][y];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y;
+		_TerrainNormals[i + 2] = z[x][y];
+
 		i = i + 4;
 		
 		_TerrainVertices[i] = ++x;
 		_TerrainVertices[i + 1] = y;
 		_TerrainVertices[i + 2] = z[x][y];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y;
+		_TerrainNormals[i + 2] = z[x][y];
+
 		i = i + 4;
 		_TerrainVertices[i] = --x;
 		_TerrainVertices[i + 1] = ++y;
 		_TerrainVertices[i + 2] = z[x][y];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y;
+		_TerrainNormals[i + 2] = z[x][y];
+
 		i = i + 4;
 		
 		_TerrainVertices[i] = _TerrainVertices[i - 4];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 3];
 		_TerrainVertices[i + 2] = _TerrainVertices[i - 2];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = _TerrainNormals[i - 4];
+		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
+
 		i = i + 4;
 		_TerrainVertices[i] = _TerrainVertices[i - 12];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 11];
 		_TerrainVertices[i + 2] = _TerrainVertices[i - 10];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = _TerrainNormals[i - 12];
+		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
+
 		i = i + 4;
 		//printf("--I = %i \n", i);
 		_TerrainVertices[i] = ++x;
 		_TerrainVertices[i + 1] = y;
 		_TerrainVertices[i + 2] = z[x][y];
 		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y;
+		_TerrainNormals[i + 2] = z[x][y];
 		y--;
 		//printf("I = %i \n", i);
 		//showVertices();
 	}
+
 	
-	x = 0;
-	y = 0;
-	a = 0.0f;
-	printf("S: %i", (int)(12 * std::sqrt(_N)));
-	for (int i = 0; i < _SIZE; i = i + 4)
+	//Kordynaty tekstury
+	const float cube_wall[12] = {	1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+									1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
+	for (int i = 0; i < _N * _N; i++)
 	{
-		if (i % (int)(24 * _N ) == 0) { y++; x = 0; }
-		//printf("I = %i \n", i);
-		_TerrainNormals[i] = x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-		_TerrainNormals[i + 3] = a;
-		i = i + 4;
-		_TerrainNormals[i] = ++x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-		_TerrainNormals[i + 3] = a;
-		i = i + 4;
-		_TerrainNormals[i] = --x;
-		_TerrainNormals[i + 1] = ++y;
-		_TerrainNormals[i + 2] = z[x][y];
-		_TerrainNormals[i + 3] = a;
-		i = i + 4;
-		_TerrainNormals[i] = _TerrainNormals[i - 4];
-		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
-		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
-		_TerrainNormals[i + 3] = a;
-		i = i + 4;
-		_TerrainNormals[i] = _TerrainNormals[i - 12];
-		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
-		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
-		_TerrainNormals[i + 3] = a;
-		i = i + 4;
-		//printf("--I = %i \n", i);
-		_TerrainNormals[i] = ++x;
-		_TerrainNormals[i + 1] = y--;
-		_TerrainNormals[i + 2] = z[x][y];
-		_TerrainNormals[i + 3] = a;
-		//printf("I = %i \n", i);
-		//showVertices();
+		for (int j = 0; j < 12; j++)_TerrainTexCoords[i*12+j] = cube_wall[j];
 	}
 
 }
@@ -203,29 +199,48 @@ int Terrain::getVerticesCount()
 	return (int)_SIZE/4;
 }
 
-//ToDo
+
 float Terrain::_TerrainTexCoords[] = {
-	//Œciana 1
+			1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+};
+/*float Terrain::_TerrainTexCoords[] = {
+	//sciana 1
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-//Œciana 2
+//sciana 2
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-//Œciana 3
+//sciana 3
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-//Œciana 4
+//sciana 4
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-//Œciana 5
+//sciana 5
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-//Œciana 6
+//sciana 6
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -400,5 +415,5 @@ float Terrain::_TerrainTexCoords[] = {
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-			};
+1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+};*/
