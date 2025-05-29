@@ -1,21 +1,21 @@
 ﻿  terrain.cpp
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(27,16): warning C4244: "inicjowanie": konwersja z "unsigned int" do "float", możliwa utrata danych
 C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(28,16): warning C4244: "inicjowanie": konwersja z "unsigned int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(29,16): warning C4244: "inicjowanie": konwersja z "unsigned int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(30,98): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(42,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(43,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(48,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(49,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(53,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(54,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(70,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(71,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(87,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(88,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(92,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(93,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(97,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(98,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(113,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
-C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(114,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(29,98): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(38,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(39,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(43,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(44,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(49,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(50,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(54,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(55,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(60,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(61,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(65,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(66,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(93,25): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(94,29): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(98,24): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\terrain.cpp(99,28): warning C4244: "=": konwersja z "int" do "float", możliwa utrata danych
   gkiw_st_10_win.vcxproj -> C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\x64\Debug\gkiw_st_10_win.exe
