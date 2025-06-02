@@ -29,6 +29,7 @@ class Camera
 public:
 	Camera(int, int, glm::vec3);
 	void update_camera(float fovy, float aspect, ShaderProgram* sp, float near, float far);
+	void update_position(float, float, float);
 	void keyCallback(GLFWwindow* window);
 	~Camera();
 

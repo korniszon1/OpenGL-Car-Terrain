@@ -6,6 +6,7 @@ Camera::Camera(int w, int h,glm::vec3 pos):position(pos), height(h), width(w)
 
 void Camera::update_camera(float fovy, float aspect, ShaderProgram *sp, float near, float far)
 {
+
 	V = glm::lookAt(
 		position,
 		rotation + position,
@@ -17,6 +18,11 @@ void Camera::update_camera(float fovy, float aspect, ShaderProgram *sp, float ne
 	glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
 	//printf("pos: %f %f %f \n", (position + rotation).r, (position + rotation).g, (position + rotation).b);
 }
+void Camera::update_position(float x, float y, float z)
+{
+	position = glm::vec3(x, y, z);
+}
+
 
 Camera::~Camera()
 {

@@ -12,10 +12,9 @@ Terrain::Terrain()
 
 	int x = 0;
 	int z = 0;
-	float y[_N + 2][_N + 2]{0.0f};
+	
 	float a = 1.0f;
-	//WIP
-	// Im mniejsze tym wieksze
+
 	const float height = 2.0f;
 	const float curve = 5.0f;
 	const float heightFactor = (1.0f / (float)(_N * _N * _N * _N / (_N /( height))));
@@ -31,77 +30,6 @@ Terrain::Terrain()
 		}
 	}
 	
-	
-	/*for (int i = 0; i < _SIZE; i = i + 4)
-	{
-		if (i % (int)(24 * _N) == 0) { y++; x = 0; }
-		_TerrainVertices[i] = x;
-		_TerrainVertices[i + 1] = y;
-		_TerrainVertices[i + 2] = z[x][y];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-
-		i = i + 4;
-		
-		_TerrainVertices[i] = ++x;
-		_TerrainVertices[i + 1] = y;
-		_TerrainVertices[i + 2] = z[x][y];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-
-		i = i + 4;
-
-		_TerrainVertices[i] = --x;
-		_TerrainVertices[i + 1] = ++y;
-		_TerrainVertices[i + 2] = z[x][y];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-
-		i = i + 4;
-		
-		_TerrainVertices[i] = _TerrainVertices[i - 4];
-		_TerrainVertices[i + 1] = _TerrainVertices[i - 3];
-		_TerrainVertices[i + 2] = _TerrainVertices[i - 2];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = _TerrainNormals[i - 4];
-		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
-		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
-
-		i = i + 4;
-
-		_TerrainVertices[i] = _TerrainVertices[i - 12];
-		_TerrainVertices[i + 1] = _TerrainVertices[i - 11];
-		_TerrainVertices[i + 2] = _TerrainVertices[i - 10];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = _TerrainNormals[i - 12];
-		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
-		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
-
-		i = i + 4;
-
-		_TerrainVertices[i] = ++x;
-		_TerrainVertices[i + 1] = y;
-		_TerrainVertices[i + 2] = z[x][y];
-		_TerrainVertices[i + 3] = a;
-
-		_TerrainNormals[i] = x;
-		_TerrainNormals[i + 1] = y;
-		_TerrainNormals[i + 2] = z[x][y];
-		y--;
-
-	}*/
-
 	for (int i = 0; i < _SIZE; i = i + 4)
 	{
 		if (i % (int)(24 * _N) == 0) { z++; x = 0; }
@@ -267,9 +195,50 @@ int Terrain::getVerticesCount()
 	return (int)_SIZE/4;
 }
 
-float Terrain::getHeight(float x, float y)
+float barryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos) {
+	float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
+	float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
+	float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
+	float l3 = 1.0f - l1 - l2;
+	return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+}
+
+
+float Terrain::getHeight(float pos_x, float pos_z)
 {
-	return 0.0f;
+	
+	float result;
+
+	float gridX = pos_x / _SCALE;
+	float gridZ = pos_z / _SCALE;
+
+	int x = (int)floor(gridX);
+	int z = (int)floor(gridZ);
+
+	float blockX = gridX - x;
+	float blockZ = gridZ - z;
+
+	if (blockX <= 1 - blockZ)
+	{
+		result = barryCentric(
+			glm::vec3(0.0f, y[x][z], 0.0f),
+			glm::vec3(1.0f, y[x + 1][z], 0.0f),
+			glm::vec3(0.0f, y[x][z + 1], 1.0f),
+			glm::vec2(blockX, blockZ)
+		);
+	}
+	else
+	{
+		result = barryCentric(
+			glm::vec3(1.0f, y[x + 1][z], 0.0f),
+			glm::vec3(1.0f, y[x + 1][z + 1], 1.0f),
+			glm::vec3(0.0f, y[x][z + 1], 1.0f),
+			glm::vec2(blockX, blockZ)
+		);
+	}
+
+	//printf("h: %f %f\n", result, pos_x - (int)floor(pos_x));
+	return result * _SCALE;
 }
 
 

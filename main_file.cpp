@@ -19,6 +19,9 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_SWIZZLE
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -35,9 +38,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 //#include "cube.h"
 #include "camera.h"
 #include "terrain.h"
-#include "myTeapot.h"
-
-
+#include <car.h>
 
 
 
@@ -56,24 +57,19 @@ float cam_rot_speed = 0.0f;
 ShaderProgram *sp;
 Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
+Car samochod;
 
 //Odkomentuj, żeby rysować kostkę
-float* vertices = myCubeVertices;
-float* normals = myCubeNormals;
-float* texCoords = myCubeTexCoords;
-float* colors = myCubeColors;
-int vertexCount = myCubeVertexCount;
+//float* vertices = myCubeVertices;
+//float* normals = myCubeNormals;
+//float* texCoords = myCubeTexCoords;
+//float* colors = myCubeColors;
+//int vertexCount = myCubeVertexCount;
 
 
-//Odkomentuj, żeby rysować czajnik
-//float* vertices = myTeapotVertices;
-//float* normals = myTeapotVertexNormals;
-//float* texCoords = myTeapotTexCoords;
-//float* colors = myTeapotColors;
-//int vertexCount = myTeapotVertexCount;
 GLuint tex0;
 GLuint tex1;
-
+GLuint tex2;
 GLuint readTexture(const char* filename) {
 	GLuint tex;
 	glActiveTexture(GL_TEXTURE0);
@@ -98,15 +94,16 @@ void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
+int speed = 10;
 
 void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
     if (action==GLFW_PRESS) {
-        if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
-        if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
-        if (key==GLFW_KEY_UP) speed_y=PI/2;
-        if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
-
-
+        if (key==GLFW_KEY_LEFT) speed_x=-PI/2 * speed;
+        if (key==GLFW_KEY_RIGHT) speed_x=PI/2 * speed;
+        if (key==GLFW_KEY_UP) speed_y=PI/2 * speed;
+        if (key==GLFW_KEY_DOWN) speed_y=-PI/2 * speed;
+		if (key == GLFW_KEY_1)sp = new ShaderProgram("v_simplest.glsl", NULL, "f_simplest.glsl");
+		if (key == GLFW_KEY_2)sp = new ShaderProgram("v_simplest.glsl", "g_simplest.glsl", "f_simplest.glsl");
 		//Kamera
 		/*if (key == GLFW_KEY_W) cam_pos_speed = cam_max_speed;
 		if (key == GLFW_KEY_A) cam_rot_speed = cam_max_speed;
@@ -143,6 +140,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 	tex0 = readTexture("bricks.png");
 	tex1 = readTexture("sky.png");
+	tex2 = readTexture("metal.png");
 	sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
 }
 
@@ -158,11 +156,18 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_y, Camera *camera) {
+void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, float pos_z, Camera *camera) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	teren.drawTerrain(sp, tex0, tex1, angle_x, angle_y);
+	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f);
+	//camera->update_position(pos_x - 5.0f, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
+	samochod.drawCar(sp, tex2, tex1, pos_x, teren.getHeight(pos_x, pos_z), pos_z);
+	
+
+
+
+
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
@@ -201,7 +206,8 @@ int main(void)
 	//Główna pętla
 	float angle_x=0; //Aktualny kąt obrotu obiektu
 	float angle_y=0; //Aktualny kąt obrotu obiektu
-	float pos_y = 0;
+	float pos_x = 300;
+	float pos_z = 300;
 	glfwSetTime(0); //Zeruj timer
 
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
@@ -209,16 +215,15 @@ int main(void)
 
 
 		
-        angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-        angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-		if(pos_y>-3.0)pos_y-=gravity * glfwGetTime();
+        pos_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+        pos_z+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 		
 		camera->keyCallback(window);
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 500.0f);
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
         glfwSetTime(0); //Zeruj timer
-		drawScene(window,angle_x,angle_y, pos_y, camera); //Wykonaj procedurę rysującą
+		drawScene(window,angle_x,angle_y, pos_x, pos_z, camera); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 
 	}

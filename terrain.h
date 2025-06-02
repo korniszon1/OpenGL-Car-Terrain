@@ -21,7 +21,7 @@ class Terrain
 	static const unsigned int _SIZE = 3*4*2* _N*_N;
 	float _TerrainVertices[_SIZE] {0.0f};
 	float _TerrainNormals[_SIZE]{ 0.0f };
-
+	float y[_N + 2][_N + 2]{ 0.0f };
 
 	static float _TerrainTexCoords[_N * _N * 12];
 public:
