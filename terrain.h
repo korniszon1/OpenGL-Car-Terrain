@@ -16,14 +16,13 @@
 
 class Terrain
 {
+	static constexpr int _SCALE = 5;
 	static const unsigned int _N = 200;
 	static const unsigned int _SIZE = 3*4*2* _N*_N;
 	float _TerrainVertices[_SIZE] {0.0f};
 	float _TerrainNormals[_SIZE]{ 0.0f };
 
 
-	//ToDo
-	//Zaaktualizowac to by to sie dzialo automatycznie
 	static float _TerrainTexCoords[_N * _N * 12];
 public:
 	Terrain();
@@ -31,7 +30,8 @@ public:
 	float* getVertices();
 	float* getNormals();
 	int getVerticesCount();
-	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float& angle_x, float& angle_y);
+	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float angle_x, float angle_y);
+	float getHeight(float, float);
 	
 };
 

@@ -11,8 +11,8 @@ Terrain::Terrain()
 
 
 	int x = 0;
-	int y = 0;
-	float z[_N + 2][_N + 2]{0.0f};
+	int z = 0;
+	float y[_N + 2][_N + 2]{0.0f};
 	float a = 1.0f;
 	//WIP
 	// Im mniejsze tym wieksze
@@ -26,13 +26,13 @@ Terrain::Terrain()
 			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 4);
 			float zeroI = _N + 2 - i;
 			float zeroJ = _N+2 - j;
-			z[i][j] = noise * heightFactor * i * i * zeroI * zeroI * heightFactor * j * j * zeroJ * zeroJ - curve*10;
+			y[i][j] = noise * heightFactor * i * i * zeroI * zeroI * heightFactor * j * j * zeroJ * zeroJ - curve*10;
 
 		}
 	}
 	
 	
-	for (int i = 0; i < _SIZE; i = i + 4)
+	/*for (int i = 0; i < _SIZE; i = i + 4)
 	{
 		if (i % (int)(24 * _N) == 0) { y++; x = 0; }
 		_TerrainVertices[i] = x;
@@ -100,9 +100,78 @@ Terrain::Terrain()
 		_TerrainNormals[i + 2] = z[x][y];
 		y--;
 
+	}*/
+
+	for (int i = 0; i < _SIZE; i = i + 4)
+	{
+		if (i % (int)(24 * _N) == 0) { z++; x = 0; }
+		_TerrainVertices[i] = x;
+		_TerrainVertices[i + 1] = y[x][z];
+		_TerrainVertices[i + 2] = z;
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y[x][z];
+		_TerrainNormals[i + 2] = z;
+
+		i = i + 4;
+
+		_TerrainVertices[i] = ++x;
+		_TerrainVertices[i + 1] = y[x][z];
+		_TerrainVertices[i + 2] = z;
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y[x][z];
+		_TerrainNormals[i + 2] = z;
+
+		i = i + 4;
+
+		_TerrainVertices[i] = --x;
+		_TerrainVertices[i + 1] = y[x][++z];
+		_TerrainVertices[i + 2] = z;
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y[x][z];
+		_TerrainNormals[i + 2] = z;
+
+		i = i + 4;
+
+		_TerrainVertices[i] = _TerrainVertices[i - 4];
+		_TerrainVertices[i + 1] = _TerrainVertices[i - 3];
+		_TerrainVertices[i + 2] = _TerrainVertices[i - 2];
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = _TerrainNormals[i - 4];
+		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
+
+		i = i + 4;
+
+		_TerrainVertices[i] = _TerrainVertices[i - 12];
+		_TerrainVertices[i + 1] = _TerrainVertices[i - 11];
+		_TerrainVertices[i + 2] = _TerrainVertices[i - 10];
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = _TerrainNormals[i - 12];
+		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
+		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
+
+		i = i + 4;
+
+		_TerrainVertices[i] = ++x;
+		_TerrainVertices[i + 1] = y[x][z];
+		_TerrainVertices[i + 2] = z;
+		_TerrainVertices[i + 3] = a;
+
+		_TerrainNormals[i] = x;
+		_TerrainNormals[i + 1] = y[x][z];
+		_TerrainNormals[i + 2] = z;
+		z--;
 	}
 
-	
+
 	/*1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,*/
 	const float cube_wall[12] = {	1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -115,12 +184,12 @@ Terrain::Terrain()
 
 }
 
-void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float &angle_x, float &angle_y)
+void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y)
 {
 	glm::mat4 M = glm::mat4(1.0f);
-	M = glm::rotate(M, angle_y - PI / 2, glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
+	M = glm::rotate(M, angle_y , glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
 	M = glm::rotate(M, angle_x, glm::vec3(0.0f, 1.0f, 0.0f));
-	M = glm::scale(M, glm::vec3(5.0f, 5.0f,5.0f));
+	M = glm::scale(M, glm::vec3(_SCALE, _SCALE, _SCALE));
 	sp->use();//Aktywacja programu cieniuj¹cego
 	//Przeslij parametry programu cieniuj¹cego do karty graficznej
 
@@ -198,9 +267,16 @@ int Terrain::getVerticesCount()
 	return (int)_SIZE/4;
 }
 
+float Terrain::getHeight(float x, float y)
+{
+	return 0.0f;
+}
+
+
+
 
 float Terrain::_TerrainTexCoords[] = {
-			1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
 		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
