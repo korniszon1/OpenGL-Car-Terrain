@@ -98,7 +98,7 @@ Terrain::Terrain()
 		_TerrainNormals[i + 2] = z;
 		z--;
 	}
-
+	
 
 	/*1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,*/
@@ -108,7 +108,6 @@ Terrain::Terrain()
 	{
 		for (int j = 0; j < 12; j++)_TerrainTexCoords[i*12+j] = cube_wall[j];
 	}
-
 
 }
 
@@ -130,9 +129,19 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 	//textura
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,
+		GL_TEXTURE_WRAP_S,
+		GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D,
+		GL_TEXTURE_WRAP_T,
+		GL_REPEAT);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, tex1);
 
+	
+	glBindTexture(GL_TEXTURE_2D, tex1);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	
 
 	glEnableVertexAttribArray(sp->a("vertex"));  //W³¹cz przesy³anie danych do atrybutu vertex
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, _TerrainVertices); //Wska¿ tablicê z danymi dla atrybutu vertex
@@ -147,6 +156,8 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, _TerrainTexCoords);
 	glEnableVertexAttribArray(sp->a("texCoord1"));
 	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, _TerrainTexCoords);
+
+	
 	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);
 
@@ -245,21 +256,6 @@ float Terrain::getHeight(float pos_x, float pos_z)
 
 
 float Terrain::_TerrainTexCoords[] = {
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-
-		1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+		3.0f, 3.0f, 0.0f, 0.0f, 0.0f, 3.0f,
+		3.0f, 3.0f, 3.0f, 0.0f, 0.0f, 0.0f
 };
