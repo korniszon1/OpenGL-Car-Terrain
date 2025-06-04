@@ -1,7 +1,6 @@
 #pragma once
 #ifndef CAR_CLASS_H
 #define CAR_CLASS_H
-#include <tiny_gltf.h>
 #include <GL/glew.h>
 #include <vector>
 #include <GLFW/glfw3.h>
