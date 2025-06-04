@@ -57,6 +57,9 @@ Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
 Car samochod;
 
+ShaderProgram *mainSp;
+ShaderProgram *wireSp;
+
 //Odkomentuj, żeby rysować kostkę
 //float* vertices = myCubeVertices;
 //float* normals = myCubeNormals;
@@ -119,8 +122,8 @@ void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
         if (key==GLFW_KEY_RIGHT) speed_x=PI/2 * speed;
         if (key==GLFW_KEY_UP) speed_y=PI/2 * speed;
         if (key==GLFW_KEY_DOWN) speed_y=-PI/2 * speed;
-		if (key == GLFW_KEY_1)sp = new ShaderProgram("v_simplest.glsl", NULL, "f_simplest.glsl");
-		if (key == GLFW_KEY_2)sp = new ShaderProgram("v_simplest.glsl", "g_simplest.glsl", "f_simplest.glsl");
+		if (key == GLFW_KEY_1)sp = mainSp;
+		if (key == GLFW_KEY_2)sp = wireSp;
 		//Kamera
 		/*if (key == GLFW_KEY_W) cam_pos_speed = cam_max_speed;
 		if (key == GLFW_KEY_A) cam_rot_speed = cam_max_speed;
@@ -158,7 +161,12 @@ void initOpenGLProgram(GLFWwindow* window) {
 	tex0 = readTexture("bricks.png");
 	tex1 = readTexture("sky.png");
 	tex2 = readTexture("metal.png");
-	sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
+
+	//sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
+
+	mainSp = new ShaderProgram("v_simplest.glsl", NULL, "f_simplest_without_geo.glsl");
+	wireSp = new ShaderProgram("v_simplest.glsl", "g_simplest.glsl", "f_simplest.glsl");
+	sp = mainSp;
 }
 
 
@@ -167,7 +175,9 @@ void freeOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 	glDeleteTextures(1, &tex0);
 	glDeleteTextures(1, &tex1);
-    delete sp;
+
+    delete mainSp;
+	delete wireSp;
 }
 
 

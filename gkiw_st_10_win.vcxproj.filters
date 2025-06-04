@@ -82,5 +82,6 @@
     <None Include="g_simplest.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
+    <None Include="f_simplest_without_geo.glsl" />
   </ItemGroup>
 </Project>

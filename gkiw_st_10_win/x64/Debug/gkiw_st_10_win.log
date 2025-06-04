@@ -1,2 +1,0 @@
-﻿glew32s.lib(glew.obj) : warning LNK4099: nie znaleziono pliku PDB „” z elementem „glew32s.lib(glew.obj)” lub w pozycji „”; obiekt zostanie skonsolidowany bez informacji debugowania
-  gkiw_st_10_win.vcxproj -> C:\Users\Janek\Documents\Projekty\Grafika\gkiw_st_10_win\x64\Debug\gkiw_st_10_win.exe

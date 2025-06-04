@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="f_simplest.glsl" />
+    <None Include="f_simplest_without_geo.glsl" />
     <None Include="g_simplest.glsl" />
     <None Include="v_simplest.glsl" />
   </ItemGroup>

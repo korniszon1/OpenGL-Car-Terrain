@@ -2,20 +2,33 @@
 
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
-in vec4 iC;
-
-in vec4 l;
-in vec4 n;
-in vec4 v;
-
-in vec2 iTexCoord0;
-in vec2 iTexCoord1;
+//in vec4 iC;
+//
+//in vec4 l;
+//in vec4 n;
+//in vec4 v;
+//
+//in vec2 iTexCoord0;
+//in vec2 iTexCoord1;
 in vec4 grid;
+
+in vec4 o_iC;
+in vec4 o_l;
+in vec4 o_n;
+in vec4 o_v;
+in vec2 o_iTexCoord0;
+in vec2 o_iTexCoord1;
 
 uniform sampler2D textureMap0;
 uniform sampler2D textureMap1;
 
 void main(void) {
+	vec4 l = o_l;
+	vec4 n = o_n;
+	vec4 v = o_v;
+	vec2 iTexCoord0 = o_iTexCoord0;
+	vec2 iTexCoord1 = o_iTexCoord1;
+
 	vec4 kd = texture(textureMap0,iTexCoord0);
 	//vec4 kd = mix(texture(textureMap0,iTexCoord0),texture(textureMap1,iTexCoord1),0.1);
 	vec4 ks = vec4(1,1,1,1);
