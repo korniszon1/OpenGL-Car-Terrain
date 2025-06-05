@@ -1,58 +1,94 @@
 #include <car.h>
-#include "myTeapot.h"
 
-float* vertices = myTeapotVertices;
-float* normals = myTeapotVertexNormals;
-float* texCoords = myTeapotTexCoords;
-float* colors = myTeapotColors;
-int vertexCount = myTeapotVertexCount;
+MeshData Car::CarBase;
+MeshData Car::CarWheel;
+
+float Car::t = 0.0f;
 
 Car::Car()
 {
 	
 }
 
+void Car::drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float rotation) {
+	glm::mat4 WMM = M;
+	glm::mat4 T = glm::translate(glm::mat4(1.0f), posInScene);
+	glm::mat4 R = glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 toCenter = glm::translate(glm::mat4(1.0f), -CarWheel.center); // center obliczony przy ³adowaniu modelu
+	WMM *= T * R * toCenter;
+	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(WMM));
+	for (int i = 0; i < CarWheel.verts.size(); ++i) {
+		glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, CarWheel.verts[i].data());
+		glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, CarWheel.norms[i].data());
+		glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, CarWheel.tcoords[i].data());
+		glDrawElements(GL_TRIANGLES, CarWheel.indices[i].size(), GL_UNSIGNED_INT, CarWheel.indices[i].data());
+	}
+}
+
 void Car::drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z)
 {
+	sp->use(); //Aktywuj program cieniuj¹cy
+
 	glm::mat4 M = glm::mat4(1.0f);
 	M = glm::translate(M, glm::vec3(pos_x, pos_y, pos_z));
-	sp->use();//Aktywacja programu cieniuj¹cego
-	//Przeslij parametry programu cieniuj¹cego do karty graficznej
-
-
-
-
+	M = glm::translate(M, -CarBase.center);
 	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
-	glUniform4f(sp->u("lp"), 0, 0, -6, 1);
+	//glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
+	//glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
 
-	//textura
+	glUniform4f(sp->u("lp"), 0, 0, -6, 1); // light
+
+	glEnableVertexAttribArray(sp->a("vertex"));
+	glEnableVertexAttribArray(sp->a("normal"));
+	glEnableVertexAttribArray(sp->a("texCoord0"));
+
+	glm::vec3 tint(16.0 / 255.0, 50 / 255.0, 130.0 / 255.0);
+	glUniform3fv(sp->u("tintColor"), 1, glm::value_ptr(tint));
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex0);
+	glUniform1i(sp->u("textureMap0"), 0);
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, tex1);
-
-
-	glEnableVertexAttribArray(sp->a("vertex"));  //W³¹cz przesy³anie danych do atrybutu vertex
-	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices); //Wska¿ tablicê z danymi dla atrybutu vertex
-
-	//glEnableVertexAttribArray(sp->a("color"));  //W³¹cz przesy³anie danych do atrybutu color
-	//glVertexAttribPointer(sp->a("color"), 4, GL_FLOAT, false, 0, colors); //Wska¿ tablicê z danymi dla atrybutu color
-
-	glEnableVertexAttribArray(sp->a("normal"));  //W³¹cz przesy³anie danych do atrybutu normal
-	glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, normals); //Wska¿ tablicê z danymi dla atrybutu normal
-
-	glEnableVertexAttribArray(sp->a("texCoord0"));
-	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords);
-	glEnableVertexAttribArray(sp->a("texCoord1"));
-	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, texCoords);
-	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);
 
+	t += glfwGetTime() * 10;
+	if (t > 1) t = 0;
+	glUniform1f(sp->u("uTime"), t);
 
-	glDrawArrays(GL_TRIANGLES, 0, vertexCount); //Narysuj obiekt
+	for (int i = 0; i < CarBase.verts.size(); ++i) {
+		//glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, myCubeVertices); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
+		glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, CarBase.verts[i].data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
 
-	glDisableVertexAttribArray(sp->a("vertex"));  //Wy³¹cz przesy³anie danych do atrybutu vertex
-	glDisableVertexAttribArray(sp->a("color"));  //Wy³¹cz przesy³anie danych do atrybutu color
-	glDisableVertexAttribArray(sp->a("normal"));  //Wy³¹cz przesy³anie danych do atrybutu normal
+		//glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, myCubeNormals);
+		glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, CarBase.norms[i].data());
+
+		//glVertexAttribPointer(sp->a("texCoord"), 2, GL_FLOAT, false, 0, myCubeTexCoords); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+		glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, CarBase.tcoords[i].data()); //Wspó³rzêdne teksturowania bierz z tablicy myCubeTexCoords
+
+		//glDrawArrays(GL_TRIANGLES, 0, myCubeVertexCount);
+		glDrawElements(GL_TRIANGLES, CarBase.indices[i].size(), GL_UNSIGNED_INT, CarBase.indices[i].data());
+	}
+
+	// --- x --- //
+	float wheelPosFront = 1.1235f;
+	float wheelPosBack = -1.523f;
+	// --- y --- //
+	float wheelPosHeight = -0.78624f;
+	// --- z --- //
+	float wheelPosLeft = -2.1451f;
+	float wheelPosRight = 0.02817f;
+	// front left
+	drawWheel(sp, M, glm::vec3(wheelPosFront, wheelPosHeight, wheelPosLeft), 0 + PI / 4);
+	// front right
+	drawWheel(sp, M, glm::vec3(wheelPosFront, wheelPosHeight, wheelPosRight), PI + PI / 4);
+	// back left
+	drawWheel(sp, M, glm::vec3(wheelPosBack, wheelPosHeight, wheelPosLeft), 0);
+	// back right
+	drawWheel(sp, M, glm::vec3(wheelPosBack, wheelPosHeight, wheelPosRight), PI);
+
+	glDisableVertexAttribArray(sp->a("vertex"));
+	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));
 }

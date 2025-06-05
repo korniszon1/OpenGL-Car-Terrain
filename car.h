@@ -1,6 +1,7 @@
 #pragma once
 #ifndef CAR_CLASS_H
 #define CAR_CLASS_H
+
 #include <GL/glew.h>
 #include <vector>
 #include <GLFW/glfw3.h>
@@ -13,11 +14,21 @@
 #include "shaderprogram.h"
 #include <glm/gtx/rotate_vector.hpp>
 
+#include "model_loader.h"
+
 class Car
 {
+private:
+	void drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float rotation);
 
 public:
+	static MeshData CarBase;
+	static MeshData CarWheel;
+
+	static float t;
+
 	Car();
 	void drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z);
 };
+
 #endif

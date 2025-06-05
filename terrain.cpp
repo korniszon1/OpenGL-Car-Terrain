@@ -122,7 +122,7 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 
 
 
-
+	sp->use();
 	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
 	glUniform4f(sp->u("lp"), 0, 0, -6, 1);
 

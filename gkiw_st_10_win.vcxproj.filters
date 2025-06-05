@@ -51,6 +51,9 @@
     <ClInclude Include="car.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="model_loader.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">
@@ -71,6 +74,9 @@
     <ClCompile Include="car.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="model_loader.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="f_simplest.glsl">
@@ -82,6 +88,8 @@
     <None Include="g_simplest.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
-    <None Include="f_simplest_without_geo.glsl" />
+    <None Include="f_simplest_without_geo.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
   </ItemGroup>
 </Project>

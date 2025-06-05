@@ -34,9 +34,11 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "myCube.h"
 //#include "model.h"
 //#include "cube.h"
+
 #include "camera.h"
 #include "terrain.h"
-#include <car.h>
+#include "car.h"
+#include "model_loader.h"
 
 
 
@@ -59,6 +61,7 @@ Car samochod;
 
 ShaderProgram *mainSp;
 ShaderProgram *wireSp;
+ShaderProgram *discoCarSp;
 
 //Odkomentuj, żeby rysować kostkę
 //float* vertices = myCubeVertices;
@@ -71,6 +74,10 @@ ShaderProgram *wireSp;
 GLuint tex0;
 GLuint tex1;
 GLuint tex2;
+
+GLuint carTexture;
+GLuint carTintAreaTexture;
+
 GLuint readTexture(const char* filename) {
 	GLuint tex;
 	glActiveTexture(GL_TEXTURE0);
@@ -164,9 +171,16 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	//sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
 
-	mainSp = new ShaderProgram("v_simplest.glsl", NULL, "f_simplest_without_geo.glsl");
-	wireSp = new ShaderProgram("v_simplest.glsl", "g_simplest.glsl", "f_simplest.glsl");
+	mainSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_simplest_without_geo.glsl");
+	wireSp = new ShaderProgram("shaders/v_simplest.glsl", "shaders/g_simplest.glsl", "shaders/f_simplest.glsl");
+	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
 	sp = mainSp;
+
+	carTexture = readTexture("models/car_texture.png");
+	carTintAreaTexture = readTexture("models/color_tint_area.png");
+
+	Car::CarBase = loadModel("models/car_base.obj");
+	Car::CarWheel = loadModel("models/car_wheel.obj");
 }
 
 
@@ -175,9 +189,14 @@ void freeOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 	glDeleteTextures(1, &tex0);
 	glDeleteTextures(1, &tex1);
+	glDeleteTextures(1, &tex2);
+
+	glDeleteTextures(1, &carTexture);
+	glDeleteTextures(1, &carTintAreaTexture);
 
     delete mainSp;
 	delete wireSp;
+	delete discoCarSp;
 }
 
 
@@ -190,7 +209,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 
 	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f);
 	//camera->update_position(pos_x - 5.0f, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
-	samochod.drawCar(sp, tex2, tex1, pos_x, teren.getHeight(pos_x, pos_z), pos_z);
+	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
 	
 
 

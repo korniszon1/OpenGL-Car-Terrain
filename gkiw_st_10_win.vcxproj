@@ -24,6 +24,7 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="lodepng.h" />
+    <ClInclude Include="model_loader.h" />
     <ClInclude Include="PerlinNoise.hpp" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="myCube.h" />
@@ -37,14 +38,16 @@
     <ClCompile Include="car.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
+    <ClCompile Include="model_loader.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="f_simplest.glsl" />
-    <None Include="f_simplest_without_geo.glsl" />
-    <None Include="g_simplest.glsl" />
-    <None Include="v_simplest.glsl" />
+    <None Include="shaders/f_simplest.glsl" />
+    <None Include="shaders/f_simplest_without_geo.glsl" />
+    <None Include="shaders/g_simplest.glsl" />
+    <None Include="shaders/v_simplest.glsl" />
+    <None Include="shaders\f_car_disco.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -118,13 +121,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>glew\include;glfw\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>glew\include;glfw\include;.;assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>glew\lib\Win32;glfw\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>glew\lib\Win32;glfw\lib\Win32;assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>MSVCRT;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -136,14 +139,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>glew\include;glfw\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>glew\include;glfw\include;.;assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>glew\lib\x64;glfw\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>glew\lib\x64;glfw\lib\x64;assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>MSVCRT;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
