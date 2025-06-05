@@ -39,7 +39,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "terrain.h"
 #include "car.h"
 #include "model_loader.h"
-
+#include "skybox.h"
 
 
 float speed_x=0;
@@ -58,6 +58,7 @@ ShaderProgram *sp;
 Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
 Car samochod;
+Skybox skybox;
 
 ShaderProgram *mainSp;
 ShaderProgram *wireSp;
@@ -77,6 +78,45 @@ GLuint tex2;
 
 GLuint carTexture;
 GLuint carTintAreaTexture;
+GLuint skyboxTexture;
+//GLuint skyboxVAO, skyboxVBO, cubemapTexture;
+ShaderProgram* skyboxShader;
+
+//float skyboxVertices[] = {
+//	-1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
+//	 1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
+//	-1.0f, -1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
+//	-1.0f,  1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f,
+//	 1.0f, -1.0f, -1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
+//	 1.0f,  1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
+//	-1.0f, -1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
+//	 1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  1.0f,
+//	-1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,
+//	 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f,
+//	-1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,
+//	 1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f
+//};
+
+GLuint loadCubemap(std::vector<std::string> faces) {
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	for (GLuint i = 0; i < faces.size(); i++) {
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, faces[i]);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	return textureID;
+}
+
+
 
 GLuint readTexture(const char* filename) {
 	GLuint tex;
@@ -174,6 +214,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	mainSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_simplest_without_geo.glsl");
 	wireSp = new ShaderProgram("shaders/v_simplest.glsl", "shaders/g_simplest.glsl", "shaders/f_simplest.glsl");
 	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
+	skyboxShader = new ShaderProgram("shaders/v_skybox.glsl", NULL, "shaders/f_skybox.glsl");
 	sp = mainSp;
 
 	carTexture = readTexture("models/car_texture.png");
@@ -181,6 +222,18 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	Car::CarBase = loadModel("models/car_base.obj");
 	Car::CarWheel = loadModel("models/car_wheel.obj");
+
+	std::vector<std::string> faces = {
+		"textures/skybox/clouds1_east.png",
+		"textures/skybox/clouds1_west.png",
+		"textures/skybox/clouds1_up.png",
+		"textures/skybox/clouds1_down.png",
+		"textures/skybox/clouds1_north.png",
+		"textures/skybox/clouds1_south.png"
+	};
+	skyboxTexture = loadCubemap(faces);
+
+	skybox.initSkybox();
 }
 
 
@@ -207,13 +260,19 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glm::mat4 projection = camera->getCameraProj();
+	glm::mat4 view = camera->getCameraView();
+
+	//Skybox musi renderowac sie pierwszy
+	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
+
+
 	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f);
-	//camera->update_position(pos_x - 5.0f, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
 	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
 	
+	
 
-
-
+	
 
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni

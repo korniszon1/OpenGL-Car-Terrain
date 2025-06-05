@@ -29,6 +29,7 @@
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="myCube.h" />
     <ClInclude Include="myTeapot.h" />
+    <ClInclude Include="skybox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="terrain.h" />
@@ -40,6 +41,7 @@
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="model_loader.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
+    <ClCompile Include="skybox.cpp" />
     <ClCompile Include="terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +50,8 @@
     <None Include="shaders/g_simplest.glsl" />
     <None Include="shaders/v_simplest.glsl" />
     <None Include="shaders\f_car_disco.glsl" />
+    <None Include="shaders\f_skybox.glsl" />
+    <None Include="shaders\v_skybox.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -10,13 +10,13 @@ void Camera::update_camera(float fovy, float aspect, ShaderProgram *sp, float ne
 	V = glm::lookAt(
 		position,
 		rotation + position,
-		up); //Wylicz macierz widoku
+		up);
 
-	glm::mat4 P = glm::perspective(fovy * PI / 180.0f, aspect, near, far);
+	P = glm::perspective(fovy * PI / 180.0f, aspect, near, far);
 
 	glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
-	//printf("pos: %f %f %f \n", (position + rotation).r, (position + rotation).g, (position + rotation).b);
+
 }
 void Camera::update_position(float x, float y, float z)
 {
@@ -67,3 +67,4 @@ void Camera::keyCallback(GLFWwindow* window) {
 }
 
 glm::mat4 Camera::getCameraView() { return V;}
+glm::mat4 Camera::getCameraProj() { return P; }

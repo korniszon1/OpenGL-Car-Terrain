@@ -20,7 +20,7 @@ class Camera
 	glm::vec3 rotation = glm::vec3(4.0f, 0.0f, 1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 V = glm::mat4(1.0f);
-
+	glm::mat4 P;
 	float speed = 1.20f;
 	float sensitivity = 20.0f;
 
@@ -32,6 +32,7 @@ public:
 	void update_position(float, float, float);
 	void keyCallback(GLFWwindow* window);
 	glm::mat4 getCameraView();
+	glm::mat4 getCameraProj();
 	~Camera();
 
 
@@ -39,5 +40,5 @@ public:
 
 
 
-#endif // !CAMERA_H_
+#endif
 
