@@ -33,6 +33,7 @@ public:
 	void keyCallback(GLFWwindow* window);
 	glm::mat4 getCameraView();
 	glm::mat4 getCameraProj();
+	glm::vec3 getPos();
 	~Camera();
 
 

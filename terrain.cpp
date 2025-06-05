@@ -22,7 +22,7 @@ Terrain::Terrain()
 	{
 		for (int j = 0; j < _N + 2; j++)
 		{
-			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 4);
+			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 40);
 			float zeroI = _N + 2 - i;
 			float zeroJ = _N+2 - j;
 			y[i][j] = noise * heightFactor * i * i * zeroI * zeroI * heightFactor * j * j * zeroJ * zeroJ - curve*10;
@@ -111,7 +111,13 @@ Terrain::Terrain()
 
 }
 
-void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y)
+glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+	glm::vec3 u = b - a;
+	glm::vec3 v = c - a;
+	return glm::normalize(glm::cross(u, v));
+}
+
+void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y,glm::mat4 V, glm::mat4 P, glm::vec3 camPos)
 {
 	glm::mat4 M = glm::mat4(1.0f);
 	M = glm::rotate(M, angle_y , glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
@@ -124,7 +130,9 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 
 	sp->use();
 	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
-	glUniform4f(sp->u("lp"), 0, 0, -6, 1);
+	glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
+	//glUniform4f(sp->u("lp"), 10, 0, 0, 1);
 
 	//textura
 	glActiveTexture(GL_TEXTURE0);
@@ -146,6 +154,7 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 	glEnableVertexAttribArray(sp->a("vertex"));  //W³¹cz przesy³anie danych do atrybutu vertex
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, _TerrainVertices); //Wska¿ tablicê z danymi dla atrybutu vertex
 
+
 	//glEnableVertexAttribArray(sp->a("color"));  //W³¹cz przesy³anie danych do atrybutu color
 	//glVertexAttribPointer(sp->a("color"), 4, GL_FLOAT, false, 0, colors); //Wska¿ tablicê z danymi dla atrybutu color
 
@@ -158,9 +167,22 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, _TerrainTexCoords);
 
 	
+
+
 	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);
 
+	glm::vec3 lightDirection = glm::normalize(glm::vec3(-200.0f, 50.0f, -(float)(_N * _SCALE) )); // sun direction
+	glUniform3fv(sp->u("lightDir"), 1, glm::value_ptr(lightDirection));
+
+	glm::vec3 cameraPos = camPos; // wherever you track it
+	glUniform3fv(sp->u("viewPos"), 1, glm::value_ptr(cameraPos));
+
+	glm::mat4 lightView = V;
+	glm::mat4 lightProjection = P; // lub perspective
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+	glUniformMatrix4fv(sp->u("lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 
 	glDrawArrays(GL_TRIANGLES, 0, getVerticesCount()); //Narysuj obiekt
 

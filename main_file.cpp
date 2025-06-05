@@ -31,7 +31,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-#include "myCube.h"
+//#include "myCube.h"
 //#include "model.h"
 //#include "cube.h"
 
@@ -81,7 +81,7 @@ GLuint carTintAreaTexture;
 GLuint skyboxTexture;
 //GLuint skyboxVAO, skyboxVBO, cubemapTexture;
 ShaderProgram* skyboxShader;
-
+ShaderProgram* shadowSp;
 //float skyboxVertices[] = {
 //	-1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
 //	 1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
@@ -205,16 +205,17 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glEnable(GL_DEPTH_TEST);
 	glfwSetWindowSizeCallback(window,windowResizeCallback);
 	glfwSetKeyCallback(window,keyCallback);
-	tex0 = readTexture("textures/bricks.png");
-	tex1 = readTexture("textures/sky.png");
+	tex0 = readTexture("textures/ground.png");
+	tex1 = readTexture("textures/ground_normal.png");
 	tex2 = readTexture("textures/metal.png");
 
 	//sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
 
-	mainSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_simplest_without_geo.glsl");
+	mainSp = new ShaderProgram("shaders/v_terrain.glsl", NULL, "shaders/f_terrain.glsl");
 	wireSp = new ShaderProgram("shaders/v_simplest.glsl", "shaders/g_simplest.glsl", "shaders/f_simplest.glsl");
 	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
 	skyboxShader = new ShaderProgram("shaders/v_skybox.glsl", NULL, "shaders/f_skybox.glsl");
+	shadowSp = new ShaderProgram("shaders/v_shadow.glsl", NULL, "shaders/f_shadow.glsl");
 	sp = mainSp;
 
 	carTexture = readTexture("models/car_texture.png");
@@ -267,7 +268,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
 
 
-	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f);
+	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f, view, projection, camera->getPos());
 	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
 	
 	
@@ -325,7 +326,7 @@ int main(void)
         pos_z+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 		
 		camera->keyCallback(window);
-		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 500.0f);
+		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 1000.0f);
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
         glfwSetTime(0); //Zeruj timer

@@ -50,8 +50,12 @@
     <None Include="shaders/g_simplest.glsl" />
     <None Include="shaders/v_simplest.glsl" />
     <None Include="shaders\f_car_disco.glsl" />
+    <None Include="shaders\f_shadow.glsl" />
     <None Include="shaders\f_skybox.glsl" />
+    <None Include="shaders\f_terrain.glsl" />
+    <None Include="shaders\v_shadow.glsl" />
     <None Include="shaders\v_skybox.glsl" />
+    <None Include="shaders\v_terrain.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -65,6 +65,6 @@ void Camera::keyCallback(GLFWwindow* window) {
 	}
 	
 }
-
+glm::vec3 Camera::getPos() { return position; }
 glm::mat4 Camera::getCameraView() { return V;}
 glm::mat4 Camera::getCameraProj() { return P; }
