@@ -165,9 +165,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glEnable(GL_DEPTH_TEST);
 	glfwSetWindowSizeCallback(window,windowResizeCallback);
 	glfwSetKeyCallback(window,keyCallback);
-	tex0 = readTexture("bricks.png");
-	tex1 = readTexture("sky.png");
-	tex2 = readTexture("metal.png");
+	tex0 = readTexture("textures/bricks.png");
+	tex1 = readTexture("textures/sky.png");
+	tex2 = readTexture("textures/metal.png");
 
 	//sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
 
