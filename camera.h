@@ -31,6 +31,7 @@ public:
 	void update_camera(float fovy, float aspect, ShaderProgram* sp, float near, float far);
 	void update_position(float, float, float);
 	void keyCallback(GLFWwindow* window);
+	glm::mat4 getCameraView();
 	~Camera();
 
 

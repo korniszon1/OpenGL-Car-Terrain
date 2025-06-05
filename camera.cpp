@@ -65,3 +65,5 @@ void Camera::keyCallback(GLFWwindow* window) {
 	}
 	
 }
+
+glm::mat4 Camera::getCameraView() { return V;}
