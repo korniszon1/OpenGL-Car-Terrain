@@ -33,6 +33,7 @@ public:
 	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float angle_x, float angle_y, glm::mat4 V, glm::mat4 P, glm::vec3 camPos);
 
 	float getHeight(float, float);
+	glm::vec3 getTerrainNormal(float, float);
 	
 };
 

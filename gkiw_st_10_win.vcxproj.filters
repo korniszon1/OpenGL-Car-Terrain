@@ -54,6 +54,9 @@
     <ClInclude Include="model_loader.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="skybox.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">
@@ -68,27 +71,51 @@
     <ClCompile Include="camera.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="terrain.cpp">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClCompile>
     <ClCompile Include="car.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="model_loader.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="skybox.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="f_simplest.glsl">
+    <None Include="shaders\f_car_disco.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
-    <None Include="v_simplest.glsl">
+    <None Include="shaders\f_shadow.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
-    <None Include="g_simplest.glsl">
+    <None Include="shaders/f_simplest.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
-    <None Include="f_simplest_without_geo.glsl">
+    <None Include="shaders/f_simplest_without_geo.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\f_skybox.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\f_terrain.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders/g_simplest.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\v_shadow.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders/v_simplest.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\v_skybox.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\v_terrain.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
   </ItemGroup>

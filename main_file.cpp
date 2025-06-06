@@ -215,7 +215,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	wireSp = new ShaderProgram("shaders/v_simplest.glsl", "shaders/g_simplest.glsl", "shaders/f_simplest.glsl");
 	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
 	skyboxShader = new ShaderProgram("shaders/v_skybox.glsl", NULL, "shaders/f_skybox.glsl");
-	shadowSp = new ShaderProgram("shaders/v_shadow.glsl", NULL, "shaders/f_shadow.glsl");
+	//shadowSp = new ShaderProgram("shaders/v_shadow.glsl", NULL, "shaders/f_shadow.glsl");
 	sp = mainSp;
 
 	carTexture = readTexture("models/car_texture.png");
@@ -269,7 +269,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 
 
 	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f, view, projection, camera->getPos());
-	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z - 5.0f);
+	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z, teren.getTerrainNormal(pos_x, pos_z));
 	
 	
 

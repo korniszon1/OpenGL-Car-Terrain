@@ -25,13 +25,30 @@ void Car::drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float 
 	}
 }
 
-void Car::drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z)
+void Car::drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal)
 {
 	sp->use(); //Aktywuj program cieniuj¹cy
 
 	glm::mat4 M = glm::mat4(1.0f);
-	M = glm::translate(M, glm::vec3(pos_x, pos_y, pos_z));
-	M = glm::translate(M, -CarBase.center);
+	//M = glm::translate(M, glm::vec3(pos_x, pos_y, pos_z));
+	//M = glm::translate(M, -CarBase.center);
+	M = glm::translate(M, glm::vec3(pos_x - CarBase.center.x, pos_y - (CarBase.center.y + CarWheel.center.y) * 2, pos_z - CarBase.center.y));
+
+	glm::vec3 forward = glm::normalize(glm::vec3(0, 0, 1)); // np. z systemu pojazdu
+
+	// Zrób ortonormalny uk³ad osi: forward (Z), right (X), up (Y = normal)
+	glm::vec3 right = glm::normalize(glm::cross(forward, terrainNormal));
+	glm::vec3 adjustedForward = glm::normalize(glm::cross(terrainNormal, right)); // poprawiony Z
+
+	glm::mat4 rotationMatrix = glm::mat4(
+		glm::vec4(right, 0.0),
+		glm::vec4(terrainNormal, 0.0),
+		glm::vec4(adjustedForward, 0.0),
+		glm::vec4(0.0, 0.0, 0.0, 1.0)
+	);
+
+	 M = M * rotationMatrix;
+
 	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
 	//glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
 	//glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));

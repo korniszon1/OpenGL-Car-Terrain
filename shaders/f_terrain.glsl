@@ -18,9 +18,9 @@ void main() {
     vec3 lightDirection = normalize(-lightDir);
     vec3 viewDir = normalize(viewPos - fragPosition);
 
-    float ambientStrength = 0.4;
-    float diffuseStrength = 2.0;
-    float specularStrength = 0.3;
+    float ambientStrength = 0.7;
+    float diffuseStrength = 1.0;
+    float specularStrength = 0.7;
 
     vec3 ambient = ambientStrength * vec3(1.0);
     float diff = max(dot(normal, lightDirection), 0.0);
@@ -40,7 +40,7 @@ void main() {
 
 
     float softness = smoothstep(0.2, 0.7, dot(normal, lightDirection));
-    float shadowFactor = mix(0.4, 1.0, softness); // 0.4 = cieñ, 1.0 = pe³ne œwiat³o
+    float shadowFactor = mix(0.3, 0.6, softness); // 0.4 = cieñ, 1.0 = pe³ne œwiat³o
 
 
     vec4 texColor = texture(textureMap0, texCoord0_out);

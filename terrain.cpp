@@ -274,8 +274,21 @@ float Terrain::getHeight(float pos_x, float pos_z)
 	return result * _SCALE;
 }
 
+glm::vec3 Terrain::getTerrainNormal(float x, float z) {
+	float dx = 0.5f;
+	float dz = 0.5f;
 
+	float hL = getHeight(x - dx, z);
+	float hR = getHeight(x + dx, z);
+	float hD = getHeight(x, z - dz);
+	float hU = getHeight(x, z + dz);
 
+	glm::vec3 dxVec = glm::vec3(2.0f * dx, hR - hL, 0.0f);
+	glm::vec3 dzVec = glm::vec3(0.0f, hU - hD, 2.0f * dz);
+
+	glm::vec3 normal = glm::normalize(glm::cross(dzVec, dxVec));
+	return normal;
+}
 
 float Terrain::_TerrainTexCoords[] = {
 		3.0f, 3.0f, 0.0f, 0.0f, 0.0f, 3.0f,
