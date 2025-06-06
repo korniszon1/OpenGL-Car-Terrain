@@ -28,7 +28,7 @@ public:
 	static float t;
 
 	Car();
-	void drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal);
+	void drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal);
 };
 
 #endif

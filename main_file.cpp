@@ -269,13 +269,9 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 
 
 	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f, view, projection, camera->getPos());
-	samochod.drawCar(sp, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z, teren.getTerrainNormal(pos_x, pos_z));
+	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z, teren.getTerrainNormal(pos_x, pos_z));
 	
 	
-
-	
-
-
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
 

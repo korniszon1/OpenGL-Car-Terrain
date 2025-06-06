@@ -25,9 +25,11 @@ void Car::drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float 
 	}
 }
 
-void Car::drawCar(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal)
+void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal)
 {
 	sp->use(); //Aktywuj program cieniuj¹cy
+	glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
 
 	glm::mat4 M = glm::mat4(1.0f);
 	//M = glm::translate(M, glm::vec3(pos_x, pos_y, pos_z));
