@@ -28,7 +28,7 @@ void Car::drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float 
 	}
 }
 
-void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float angle, float pos_x, float pos_y, float pos_z, float car_speed, glm::vec3 terrainNormal)
+void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float angle, float pos_x, float pos_y, float pos_z, float car_speed, glm::vec3 terrainNormal, bool disco)
 {
 	//TODO grawitacja
 	//if (y < pos_y + CarBase.center.y * 4) y = pos_y;
@@ -54,9 +54,10 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 		glm::vec4(0.0, 0.0, 0.0, 1.0)
 	);
 
-	 M = M * rotationMatrix;
-	 M = glm::translate(M, glm::vec3(- CarBase.center.x , CarBase.center.y * 4, - CarBase.center.z));
+	M = M * rotationMatrix;
+	M = glm::translate(M, glm::vec3(-CarBase.center.x, -(CarBase.center.y + CarWheel.center.y * 2), -CarBase.center.z));
 	glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M));
+
 	//glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
 	//glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
 
@@ -77,7 +78,7 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	glBindTexture(GL_TEXTURE_2D, tex1);
 	glUniform1i(sp->u("textureMap1"), 1);
 
-	t += glfwGetTime() * 1;
+	if (disco) t += glfwGetTime() * 1;
 	if (t > 1) t = 0;
 	glUniform1f(sp->u("uTime"), t);
 	glm::vec3 lightDirection = glm::normalize(glm::vec3((float)(200 * 5) * 5, 100.0f, -(float)(200 * 5)*4));
@@ -126,11 +127,11 @@ void Car::keyCallback(GLFWwindow* window) {
 	{
 		front_rotation = glm::mix(front_rotation, -PI / 4.0f, 0.1f);
 	}
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		front_rotation = glm::mix(front_rotation, PI / 4.0f, 0.1f);
 	}
-	else
+	if (glfwGetKey(window, GLFW_KEY_A) != GLFW_PRESS && glfwGetKey(window, GLFW_KEY_D) != GLFW_PRESS)
 	{
 		front_rotation = glm::mix(front_rotation, 0.0f, 0.1f);
 	}

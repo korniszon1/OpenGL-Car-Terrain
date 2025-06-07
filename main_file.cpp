@@ -50,6 +50,8 @@ float aspectRatio=1;
 float gravity = 0.5;
 float drag = 0.96f;
 
+bool disco = false;
+
 
 glm::vec3 cam_pos = glm::vec3(0.0f, 1.0f, -6.0f); // startowa pozycja kamery
 glm::vec3 cam_rot = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -166,13 +168,14 @@ void error_callback(int error, const char* description) {
 int speed = 1;
 
 void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
-    if (action==GLFW_PRESS || action == GLFW_REPEAT) {
-        if (key==GLFW_KEY_A) speed_x=PI/2 * speed;
-        if (key==GLFW_KEY_D) speed_x=-PI/2 * speed;
-        if (key==GLFW_KEY_W) car_acce = acce_speed;
-        if (key==GLFW_KEY_S) car_acce = -acce_speed;
-		if (key == GLFW_KEY_1)sp = mainSp;
-		if (key == GLFW_KEY_2)sp = wireSp;
+    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+        if (key == GLFW_KEY_A) speed_x = PI/2 * speed;
+        if (key == GLFW_KEY_D) speed_x = -PI/2 * speed;
+        if (key == GLFW_KEY_W) car_acce = acce_speed;
+        if (key == GLFW_KEY_S) car_acce = -acce_speed;
+		if (key == GLFW_KEY_1) sp = mainSp;
+		if (key == GLFW_KEY_2) sp = wireSp;
+		if (key == GLFW_KEY_0) disco = !disco;
 		//Kamera
 		/*if (key == GLFW_KEY_W) cam_pos_speed = cam_max_speed;
 		if (key == GLFW_KEY_A) cam_rot_speed = cam_max_speed;
@@ -181,8 +184,8 @@ void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
 		printf("%f",cam_rot.r);*/
     }
     if (action==GLFW_RELEASE) {
-        if (key==GLFW_KEY_A) speed_x=0;
-        if (key==GLFW_KEY_D) speed_x=0;
+        if (key == GLFW_KEY_A && speed_x > 0) speed_x = 0;
+        if (key == GLFW_KEY_D && speed_x < 0) speed_x = 0;
 		if (key == GLFW_KEY_W || key == GLFW_KEY_S) {
 			car_acce = 0.0f;
 		}
@@ -195,7 +198,7 @@ void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
 }
 
 void windowResizeCallback(GLFWwindow* window,int width,int height) {
-	printf("wysokosc: %i %i", width, height);
+	//printf("wysokosc: %i %i", width, height);
     if (height==0) return;
     aspectRatio=(float)width/(float)height;
     glViewport(0,0,width,height);
@@ -272,7 +275,7 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
 	camera->updateOrbit();
 	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, angle, view, projection, camera->getPos());
-	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z));
+	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
 	
 	
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -324,16 +327,21 @@ int main(void)
 		}
 		car_speed += car_acce;
 		car_speed = glm::clamp(car_speed, -2.0f, 30.0f);
+		float speed_perc = glm::min(abs(car_speed > 0.0f ? car_speed / 10.0f : car_speed / 5.0f), 1.0f);
 		
-        angle+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-        //pos_x+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+        //angle+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+		angle += speed_x * speed_perc * glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+
 		pos_x -= cos(angle) * car_speed * glfwGetTime();
 		pos_z += sin(angle) * car_speed * glfwGetTime();
+
 		camera->keyCallback(window);
 		samochod.keyCallback(window);
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 1000.0f);
+
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
+
         glfwSetTime(0); //Zeruj timer
 		drawScene(window,angle, pos_x, pos_z, car_speed, camera); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
