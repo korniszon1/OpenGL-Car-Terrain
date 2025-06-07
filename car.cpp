@@ -80,7 +80,11 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	t += glfwGetTime() * 1;
 	if (t > 1) t = 0;
 	glUniform1f(sp->u("uTime"), t);
+	glm::vec3 lightDirection = glm::normalize(glm::vec3((float)(200 * 5) * 5, 100.0f, -(float)(200 * 5)*4));
+	glUniform3fv(sp->u("lightDir"), 1, glm::value_ptr(lightDirection));
 
+	glm::vec3 cameraPos = glm::vec3(pos_x,pos_y,pos_z);
+	glUniform3fv(sp->u("viewPos"), 1, glm::value_ptr(cameraPos));
 	for (int i = 0; i < CarBase.verts.size(); ++i) {
 		//glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, myCubeVertices); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
 		glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, CarBase.verts[i].data()); //Wspó³rzêdne wierzcho³ków bierz z tablicy myCubeVertices
