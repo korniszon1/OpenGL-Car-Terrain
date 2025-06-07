@@ -268,7 +268,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y, float pos_x, floa
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
 
 
-	teren.drawTerrain(sp, tex0, tex1, 0.0f, 0.0f, view, projection, camera->getPos());
+	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, view, projection, camera->getPos());
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, pos_x, teren.getHeight(pos_x, pos_z), pos_z, teren.getTerrainNormal(pos_x, pos_z));
 	
 	

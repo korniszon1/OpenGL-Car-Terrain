@@ -29,10 +29,11 @@ Terrain::Terrain()
 
 		}
 	}
-	
-	for (int i = 0; i < _SIZE; i = i + 4)
+	float tileRepeat = _N;
+	for (int i = 0; i < _SIZE;)
 	{
 		if (i % (int)(24 * _N) == 0) { z++; x = 0; }
+
 		_TerrainVertices[i] = x;
 		_TerrainVertices[i + 1] = y[x][z];
 		_TerrainVertices[i + 2] = z;
@@ -42,7 +43,7 @@ Terrain::Terrain()
 		_TerrainNormals[i + 1] = y[x][z];
 		_TerrainNormals[i + 2] = z;
 
-		i = i + 4;
+		i += 4;
 
 		_TerrainVertices[i] = ++x;
 		_TerrainVertices[i + 1] = y[x][z];
@@ -53,7 +54,7 @@ Terrain::Terrain()
 		_TerrainNormals[i + 1] = y[x][z];
 		_TerrainNormals[i + 2] = z;
 
-		i = i + 4;
+		i += 4;
 
 		_TerrainVertices[i] = --x;
 		_TerrainVertices[i + 1] = y[x][++z];
@@ -64,7 +65,7 @@ Terrain::Terrain()
 		_TerrainNormals[i + 1] = y[x][z];
 		_TerrainNormals[i + 2] = z;
 
-		i = i + 4;
+		i += 4;
 
 		_TerrainVertices[i] = _TerrainVertices[i - 4];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 3];
@@ -75,7 +76,7 @@ Terrain::Terrain()
 		_TerrainNormals[i + 1] = _TerrainNormals[i - 3];
 		_TerrainNormals[i + 2] = _TerrainNormals[i - 2];
 
-		i = i + 4;
+		i += 4;
 
 		_TerrainVertices[i] = _TerrainVertices[i - 12];
 		_TerrainVertices[i + 1] = _TerrainVertices[i - 11];
@@ -86,7 +87,8 @@ Terrain::Terrain()
 		_TerrainNormals[i + 1] = _TerrainNormals[i - 11];
 		_TerrainNormals[i + 2] = _TerrainNormals[i - 10];
 
-		i = i + 4;
+
+		i += 4;
 
 		_TerrainVertices[i] = ++x;
 		_TerrainVertices[i + 1] = y[x][z];
@@ -96,19 +98,20 @@ Terrain::Terrain()
 		_TerrainNormals[i] = x;
 		_TerrainNormals[i + 1] = y[x][z];
 		_TerrainNormals[i + 2] = z;
+
+
+		i += 4;
+
 		z--;
 	}
-	
-
-	/*1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,*/
-	const float cube_wall[12] = {	1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-									1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
-	for (int i = 0; i < _N * _N ; i++)
+	for (int v = 0; v < _SIZE/4; v++)
 	{
-		for (int j = 0; j < 12; j++)_TerrainTexCoords[i*12+j] = cube_wall[j];
-	}
+		float vx = _TerrainVertices[v * 4 + 0];
+		float vz = _TerrainVertices[v * 4 + 2];
 
+		_TerrainTexCoords[v * 2 + 0] = (vx / _N) * tileRepeat;
+		_TerrainTexCoords[v * 2 + 1] = (vz / _N) * tileRepeat;
+	}
 }
 
 glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
@@ -120,8 +123,8 @@ glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y,glm::mat4 V, glm::mat4 P, glm::vec3 camPos)
 {
 	glm::mat4 M = glm::mat4(1.0f);
-	M = glm::rotate(M, angle_y , glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
-	M = glm::rotate(M, angle_x, glm::vec3(0.0f, 1.0f, 0.0f));
+	M = glm::rotate(M, 0.0f , glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
+	M = glm::rotate(M, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	M = glm::scale(M, glm::vec3(_SCALE, _SCALE, _SCALE));
 	sp->use();//Aktywacja programu cieniuj¹cego
 	//Przeslij parametry programu cieniuj¹cego do karty graficznej
@@ -171,13 +174,16 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 
 	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);
-
-	glm::vec3 lightDirection = glm::normalize(glm::vec3(-200.0f, 50.0f, -(float)(_N * _SCALE) )); // sun direction
+	//uniform vec3 pointLightPos;
+	//uniform vec3 pointLightColor;
+	glm::vec3 lightDirection = glm::normalize(glm::vec3(-(float)(_N * _SCALE), 100.0f, -(float)(_N * _SCALE) + 250.0f)); // sun direction
 	glUniform3fv(sp->u("lightDir"), 1, glm::value_ptr(lightDirection));
 
-	glm::vec3 cameraPos = camPos; // wherever you track it
+	glm::vec3 cameraPos = camPos;
 	glUniform3fv(sp->u("viewPos"), 1, glm::value_ptr(cameraPos));
-
+	//x -0.449507 y 0.238786 z -1.072379
+	glUniform3fv(sp->u("pointLightPos"), 1, glm::value_ptr(glm::vec3(angle_x- 6.0f, getHeight(angle_x - 6.0f, angle_y - 3.0f)+5.0f, angle_y - 3.0f)));
+	glUniform3fv(sp->u("pointLightColor"), 1, glm::value_ptr(glm::vec3(0.5f,0.5,0.5f)));
 	glm::mat4 lightView = V;
 	glm::mat4 lightProjection = P; // lub perspective
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
