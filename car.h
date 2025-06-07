@@ -18,9 +18,12 @@
 
 class Car
 {
-private:
-	void drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float rotation);
-
+	void drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float car_speed, float rotation);
+	float front_rotation = 0.0f;
+	float wheelRot = 0.0f;
+	float y = -200.0f;
+	float gravity = 0.02;
+	glm::mat4 M;
 public:
 	static MeshData CarBase;
 	static MeshData CarWheel;
@@ -28,7 +31,9 @@ public:
 	static float t;
 
 	Car();
-	void drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float pos_x, float pos_y, float pos_z, glm::vec3 terrainNormal);
+	void drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float angle_x, float pos_x, float pos_y, float pos_z,float car_speed, glm::vec3 terrainNormal);
+	void keyCallback(GLFWwindow* window);
+	glm::vec3 getCameraPos();
 };
 
 #endif

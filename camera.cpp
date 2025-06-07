@@ -29,7 +29,9 @@ Camera::~Camera()
 }
 
 void Camera::keyCallback(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+
+	//Stara kamera
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		position += speed * rotation;
 	}
@@ -44,9 +46,9 @@ void Camera::keyCallback(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		position += speed * glm::normalize(glm::cross(rotation, up));
-	}
+	}*/
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	/*if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		double mouseX;
@@ -62,9 +64,37 @@ void Camera::keyCallback(GLFWwindow* window) {
 		rotation = glm::rotate(rotation, glm::radians(-mRotY),up);
 
 		glfwSetCursorPos(window, (width / 2), (height / 2) );
+	}*/
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+
+		float offsetX = (float)(mouseX - width / 2) * sensitivity;
+		float offsetY = (float)(mouseY - height / 2) * sensitivity;
+
+		yaw -= offsetX;
+		pitch += offsetY;
+
+		if (pitch > 89.0f) pitch = 89.0f;
+		if (pitch < 0.0f) pitch = 0.0f;
+
+		glfwSetCursorPos(window, width / 2, height / 2);
 	}
-	
 }
+
+void Camera::updateOrbit() {
+	float yawRad = glm::radians(yaw);
+	float pitchRad = glm::radians(pitch);
+
+	position.x = target.x + distance * cos(pitchRad) * sin(yawRad);
+	position.y = target.y + distance * sin(pitchRad);
+	position.z = target.z + distance * cos(pitchRad) * cos(yawRad);
+
+	rotation = glm::normalize(target - position);
+}
+
 glm::vec3 Camera::getPos() { return position; }
 glm::mat4 Camera::getCameraView() { return V;}
 glm::mat4 Camera::getCameraProj() { return P; }

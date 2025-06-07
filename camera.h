@@ -22,11 +22,17 @@ class Camera
 	glm::mat4 V = glm::mat4(1.0f);
 	glm::mat4 P;
 	float speed = 1.20f;
-	float sensitivity = 20.0f;
+	float sensitivity = 0.2f;
 
 	int width;
 	int height;
+
+	float distance = 20.0f;               // Distance from the target
+	float yaw = 0.0f;                     // Horizontal angle (in degrees)
+	float pitch = 20.0f;
+
 public:
+	glm::vec3 target = glm::vec3(0.0f);
 	Camera(int, int, glm::vec3);
 	void update_camera(float fovy, float aspect, ShaderProgram* sp, float near, float far);
 	void update_position(float, float, float);
@@ -34,6 +40,7 @@ public:
 	glm::mat4 getCameraView();
 	glm::mat4 getCameraProj();
 	glm::vec3 getPos();
+	void updateOrbit();
 	~Camera();
 
 
