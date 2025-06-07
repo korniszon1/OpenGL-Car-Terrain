@@ -30,7 +30,7 @@ public:
 	float* getVertices();
 	float* getNormals();
 	int getVerticesCount();
-	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float angle_x, float angle_y, glm::mat4 V, glm::mat4 P, glm::vec3 camPos);
+	void drawTerrain(ShaderProgram* sp, GLuint& tex0, GLuint& tex1, float angle_x, float angle_y, float car_rot_angle, glm::mat4 V, glm::mat4 P, glm::vec3 camPos);
 
 	float getHeight(float, float);
 	glm::vec3 getTerrainNormal(float, float);

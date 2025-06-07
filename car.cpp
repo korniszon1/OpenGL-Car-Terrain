@@ -77,7 +77,7 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	glBindTexture(GL_TEXTURE_2D, tex1);
 	glUniform1i(sp->u("textureMap1"), 1);
 
-	t += glfwGetTime() * 10;
+	t += glfwGetTime() * 1;
 	if (t > 1) t = 0;
 	glUniform1f(sp->u("uTime"), t);
 
@@ -116,6 +116,7 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));
 }
+
 void Car::keyCallback(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{

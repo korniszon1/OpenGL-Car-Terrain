@@ -271,7 +271,7 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
 	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
 	camera->updateOrbit();
-	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, view, projection, camera->getPos());
+	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, angle, view, projection, camera->getPos());
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z));
 	
 	
@@ -290,7 +290,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(512, 512, "Car", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{

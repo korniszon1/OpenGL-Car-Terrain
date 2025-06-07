@@ -120,7 +120,7 @@ glm::vec3 computeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 	return glm::normalize(glm::cross(u, v));
 }
 
-void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y,glm::mat4 V, glm::mat4 P, glm::vec3 camPos)
+void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float angle_x, float angle_y, float car_rot_angle, glm::mat4 V, glm::mat4 P, glm::vec3 camPos)
 {
 	glm::mat4 M = glm::mat4(1.0f);
 	M = glm::rotate(M, 0.0f , glm::vec3(1.0f, 0.0f, 0.0f)); //Wylicz macierz modelu
@@ -181,9 +181,17 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 
 	glm::vec3 cameraPos = camPos;
 	glUniform3fv(sp->u("viewPos"), 1, glm::value_ptr(cameraPos));
+
 	//x -0.449507 y 0.238786 z -1.072379
-	glUniform3fv(sp->u("pointLightPos"), 1, glm::value_ptr(glm::vec3(angle_x- 6.0f, getHeight(angle_x - 6.0f, angle_y - 3.0f)+5.0f, angle_y - 3.0f)));
-	glUniform3fv(sp->u("pointLightColor"), 1, glm::value_ptr(glm::vec3(0.5f,0.5,0.5f)));
+	glm::vec3 lightOffset = glm::vec3(-5.0f, 7.5f, 0.0f);
+	glm::vec3 carPos = glm::vec3(angle_x, getHeight(angle_x, angle_y), angle_y);
+	glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), car_rot_angle, glm::vec3(0, 1, 0));
+	glm::vec3 rotatedOffset = glm::vec3(rotation * glm::vec4(lightOffset, 1.0f));
+	glm::vec3 carLightPos = carPos + rotatedOffset;
+	//glm::vec3 carLightPos = glm::vec3(angle_x - 6.0f, getHeight(angle_x - 6.0f, angle_y - 3.0f) + 5.0f, angle_y - 3.0f);
+	glUniform3fv(sp->u("pointLightPos"), 1, glm::value_ptr(carLightPos));
+	glUniform3fv(sp->u("pointLightColor"), 1, glm::value_ptr(glm::vec3(245.0/255.0, 197.0/255.0, 66.0/255.0)));
+
 	glm::mat4 lightView = V;
 	glm::mat4 lightProjection = P; // lub perspective
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
