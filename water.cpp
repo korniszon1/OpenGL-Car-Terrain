@@ -10,7 +10,7 @@ Water::Water()
 void Water::calculateVert()
 {
 
-	const siv::PerlinNoise& perlin = _perlin;
+	//const siv::PerlinNoise& perlin = _perlin;
 	int x = 0;
 	int z = 0;
 

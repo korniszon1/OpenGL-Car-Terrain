@@ -1,10 +1,10 @@
 #include "terrain.h"
 #include <cmath>
 #include "PerlinNoise.hpp"
-
+#include <random> 
 Terrain::Terrain()
 {
-	const siv::PerlinNoise::seed_type seed = 123456u;
+	const siv::PerlinNoise::seed_type seed = std::random_device{}();
 
 	const siv::PerlinNoise perlin{ seed };
 
@@ -22,7 +22,7 @@ Terrain::Terrain()
 	{
 		for (int j = 0; j < _N + 2; j++)
 		{
-			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 40);
+			const double noise = perlin.octave2D_01((i * 0.01), (j * 0.01), 4);
 			float zeroI = _N + 2 - i;
 			float zeroJ = _N+2 - j;
 			y[i][j] = noise * heightFactor * i * i * zeroI * zeroI * heightFactor * j * j * zeroJ * zeroJ - curve*10;
@@ -183,13 +183,15 @@ void Terrain::drawTerrain(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, float a
 	glUniform3fv(sp->u("viewPos"), 1, glm::value_ptr(cameraPos));
 
 	//x -0.449507 y 0.238786 z -1.072379
-	glm::vec3 lightOffset = glm::vec3(-5.0f, 7.5f, 0.0f);
+	glm::vec3 lightOffset = glm::vec3(-1.5f, 7.5f, 0.0f);
 	glm::vec3 carPos = glm::vec3(angle_x, getHeight(angle_x, angle_y), angle_y);
 	glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), car_rot_angle, glm::vec3(0, 1, 0));
 	glm::vec3 rotatedOffset = glm::vec3(rotation * glm::vec4(lightOffset, 1.0f));
 	glm::vec3 carLightPos = carPos + rotatedOffset;
+	carLightPos.y = getHeight(carLightPos.x, carLightPos.z) + 1.0f;
 	//glm::vec3 carLightPos = glm::vec3(angle_x - 6.0f, getHeight(angle_x - 6.0f, angle_y - 3.0f) + 5.0f, angle_y - 3.0f);
 	glUniform3fv(sp->u("pointLightPos"), 1, glm::value_ptr(carLightPos));
+	glUniform3fv(sp->u("lightPDir"), 1, glm::value_ptr(rotation));
 	glUniform3fv(sp->u("pointLightColor"), 1, glm::value_ptr(glm::vec3(245.0/255.0, 197.0/255.0, 66.0/255.0)));
 
 	glm::mat4 lightView = V;

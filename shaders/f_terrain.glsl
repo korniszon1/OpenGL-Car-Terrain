@@ -11,6 +11,7 @@ uniform vec3 lightDir;
 uniform vec3 viewPos;
 uniform sampler2D shadowMap;
 uniform mat4 lightSpaceMatrix;
+uniform vec3 lightPDir;
 
 uniform vec3 pointLightPos;
 uniform vec3 pointLightColor;
@@ -51,26 +52,58 @@ void main() {
 
 
     vec4 texColor = texture(textureMap0, texCoord0_out);
+    if (texColor.a < 0.5){
+        discard;
+    }
+    
+    vec3 spotDir = normalize(lightPDir); // Direction of spotlight
+    float theta = dot(normalize(fragPosition - pointLightPos), -spotDir);
 
+    float innerCutoff = cos(radians(20.5));
+    float outerCutoff = cos(radians(32.5));
+    float epsilon = innerCutoff - outerCutoff;
+    float intensity = clamp((theta - outerCutoff) / epsilon, 0.0, 1.0);
+
+    vec3 lighting;
+    if(theta > 0.8) 
+    {       
+      // Point Light
+        vec3 lightToFrag = pointLightPos - fragPosition;
+        vec3 pointLightDir = normalize(lightToFrag);
+        float distance = length(lightToFrag);
+
+
+        float attenuation = 1.0 / (1.0 + 0.09 * distance * 2 + 0.32 * (distance * distance));
+
+        float diffPoint = max(dot(normal, pointLightDir), 0.0);
+        vec3 diffusePoint = 40.0 * pointLightColor;
+
+
+        diffusePoint *= attenuation * intensity;
+        lighting = (ambient + diffuse + specular) * shadowFactor + (diffusePoint);
+    }
+    else 
+    {
+        vec3 lightToFrag = pointLightPos - fragPosition;
+        vec3 pointLightDir = normalize(lightToFrag);
+        float distance = length(lightToFrag);
+
+
+        float attenuation = 1.0 / (1.0 + 0.09 * distance * 2 + 1.2 * (distance * distance));
+
+        float diffPoint = max(dot(normal, pointLightDir), 0.0);
+        vec3 diffusePoint = 2.0 * pointLightColor;
+
+
+        diffusePoint *= attenuation;
+        lighting = (ambient + diffuse + specular) * shadowFactor + diffusePoint;
+    }
+      
     
 
-    // Point Light
-    vec3 lightToFrag = pointLightPos - fragPosition;
-    vec3 pointLightDir = normalize(lightToFrag);
-    float distance = length(lightToFrag);
 
 
-    float attenuation = 1.0 / (1.0 + 0.09 * distance * 2 + 1.2 * (distance * distance));
-
-    float diffPoint = max(dot(normal, pointLightDir), 0.0);
-    vec3 diffusePoint = 200.0 * pointLightColor;
-
-
-    diffusePoint *= attenuation;
-
-
-
-    vec3 lighting = (ambient + diffuse + specular) * shadowFactor + (diffusePoint);
+    
 
     vec3 finalColor = texColor.rgb * lighting * slopeDarken * heightDarken;
     outColor = vec4(finalColor, texColor.a);
