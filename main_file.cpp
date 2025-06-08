@@ -40,7 +40,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "car.h"
 #include "model_loader.h"
 #include "skybox.h"
-
+#include "water.h"
 
 float speed_x=0;
 float car_speed =0;
@@ -61,6 +61,7 @@ Camera* camera = new Camera(500, 500,cam_pos);
 Terrain teren;
 Car samochod;
 Skybox skybox;
+Water ocean;
 
 ShaderProgram *mainSp;
 ShaderProgram *wireSp;
@@ -77,6 +78,8 @@ ShaderProgram *discoCarSp;
 GLuint tex0;
 GLuint tex1;
 GLuint tex2;
+GLuint tex3;
+GLuint tex4;
 
 GLuint carTexture;
 GLuint carTintAreaTexture;
@@ -84,20 +87,7 @@ GLuint skyboxTexture;
 //GLuint skyboxVAO, skyboxVBO, cubemapTexture;
 ShaderProgram* skyboxShader;
 ShaderProgram* shadowSp;
-//float skyboxVertices[] = {
-//	-1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
-//	 1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
-//	-1.0f, -1.0f,  1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f, -1.0f,
-//	-1.0f,  1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,  1.0f,
-//	 1.0f, -1.0f, -1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
-//	 1.0f,  1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f, -1.0f,
-//	-1.0f, -1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
-//	 1.0f,  1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  1.0f,
-//	-1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f,  1.0f,
-//	 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f, -1.0f,
-//	-1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f, -1.0f,
-//	 1.0f, -1.0f, -1.0f, -1.0f, -1.0f,  1.0f,  1.0f, -1.0f,  1.0f
-//};
+ShaderProgram* waterSp;
 
 GLuint loadCubemap(std::vector<std::string> faces) {
 	GLuint textureID;
@@ -210,14 +200,15 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 	tex0 = readTexture("textures/ground.png");
 	tex1 = readTexture("textures/ground_normal.png");
-	tex2 = readTexture("textures/metal.png");
-
+	tex2 = readTexture("textures/water.png");
+	tex3 = readTexture("textures/noise.png");
 	//sp=new ShaderProgram("v_simplest.glsl",NULL, "f_simplest.glsl");
 
 	mainSp = new ShaderProgram("shaders/v_terrain.glsl", NULL, "shaders/f_terrain.glsl");
 	wireSp = new ShaderProgram("shaders/v_simplest.glsl", "shaders/g_simplest.glsl", "shaders/f_simplest.glsl");
 	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
 	skyboxShader = new ShaderProgram("shaders/v_skybox.glsl", NULL, "shaders/f_skybox.glsl");
+	waterSp = new ShaderProgram("shaders/v_water.glsl", "shaders/g_water.glsl", "shaders/f_water.glsl");
 	//shadowSp = new ShaderProgram("shaders/v_shadow.glsl", NULL, "shaders/f_shadow.glsl");
 	sp = mainSp;
 
@@ -270,8 +261,10 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 	//Skybox musi renderowac sie pierwszy
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
 	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
-	camera->updateOrbit();
+	//camera->updateOrbit();
 	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, angle, view, projection, camera->getPos());
+	camera->updateOrbit();
+	ocean.drawWater(waterSp, tex2, tex3, skyboxTexture, pos_x, pos_z, angle, view, projection, camera->getPos());
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z));
 	
 	
@@ -331,7 +324,7 @@ int main(void)
 		pos_z += sin(angle) * car_speed * glfwGetTime();
 		camera->keyCallback(window);
 		samochod.keyCallback(window);
-		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 1000.0f);
+		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
         glfwSetTime(0); //Zeruj timer

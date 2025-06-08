@@ -57,6 +57,9 @@
     <ClInclude Include="skybox.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="water.h">
+      <Filter>Pliki zasobów</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">
@@ -82,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="terrain.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="water.cpp">
+      <Filter>Pliki zasobów</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +122,15 @@
       <Filter>Pliki zasobów</Filter>
     </None>
     <None Include="shaders\v_terrain.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\f_water.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\v_water.glsl">
+      <Filter>Pliki zasobów</Filter>
+    </None>
+    <None Include="shaders\g_water.glsl">
       <Filter>Pliki zasobów</Filter>
     </None>
   </ItemGroup>

@@ -33,6 +33,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="terrain.h" />
+    <ClInclude Include="water.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="terrain.cpp" />
+    <ClCompile Include="water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders/f_simplest.glsl" />
@@ -53,9 +55,12 @@
     <None Include="shaders\f_shadow.glsl" />
     <None Include="shaders\f_skybox.glsl" />
     <None Include="shaders\f_terrain.glsl" />
+    <None Include="shaders\f_water.glsl" />
+    <None Include="shaders\g_water.glsl" />
     <None Include="shaders\v_shadow.glsl" />
     <None Include="shaders\v_skybox.glsl" />
     <None Include="shaders\v_terrain.glsl" />
+    <None Include="shaders\v_water.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
