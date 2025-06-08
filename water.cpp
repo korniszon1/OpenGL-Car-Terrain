@@ -178,7 +178,8 @@ void Water::drawWater(ShaderProgram *sp, GLuint &tex0, GLuint &tex1, GLuint& tex
 	glUniform1f(sp->u("time"),waves);
 	
 	glUniform1f(sp->u("waveStrength"), 2.0f);
-
+	glUniform3f(sp->u("fogColor"), 0.6f, 0.7f, 0.8f); // Light blue-gray fog
+	glUniform1f(sp->u("fogDensity"), 0.02f);
 
 	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);

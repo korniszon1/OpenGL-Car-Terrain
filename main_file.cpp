@@ -156,22 +156,17 @@ void error_callback(int error, const char* description) {
 }
 
 int speed = 1;
-
+int is_forward = 1;
 void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-        if (key == GLFW_KEY_A) speed_x = PI/2 * speed;
+        if (key == GLFW_KEY_A) speed_x =  PI/2 * speed;
         if (key == GLFW_KEY_D) speed_x = -PI/2 * speed;
-        if (key == GLFW_KEY_W) car_acce = acce_speed;
-        if (key == GLFW_KEY_S) car_acce = -acce_speed;
+		if (key == GLFW_KEY_W) { car_acce = acce_speed;		is_forward =  1; }
+		if (key == GLFW_KEY_S) { car_acce = -acce_speed;	is_forward = -1;}
 		if (key == GLFW_KEY_1) sp = mainSp;
 		if (key == GLFW_KEY_2) sp = wireSp;
 		if (key == GLFW_KEY_0) disco = !disco;
-		//Kamera
-		/*if (key == GLFW_KEY_W) cam_pos_speed = cam_max_speed;
-		if (key == GLFW_KEY_A) cam_rot_speed = cam_max_speed;
-		if (key == GLFW_KEY_S) cam_pos_speed = -cam_max_speed;
-		if (key == GLFW_KEY_D) cam_rot_speed = -cam_max_speed;
-		printf("%f",cam_rot.r);*/
+
     }
     if (action==GLFW_RELEASE) {
         if (key == GLFW_KEY_A && speed_x > 0) speed_x = 0;
@@ -179,11 +174,6 @@ void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
 		if (key == GLFW_KEY_W || key == GLFW_KEY_S) {
 			car_acce = 0.0f;
 		}
-
-		/*if (key == GLFW_KEY_W) cam_pos_speed = 0;
-		if (key == GLFW_KEY_A) cam_rot_speed = 0;
-		if (key == GLFW_KEY_S) cam_pos_speed = 0;
-		if (key == GLFW_KEY_D) cam_rot_speed = 0;*/
     }
 }
 
@@ -325,7 +315,7 @@ int main(void)
 		float speed_perc = glm::min(abs(car_speed > 0.0f ? car_speed / 10.0f : car_speed / 5.0f), 1.0f);
 		
         //angle+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-		angle += speed_x * speed_perc * glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+		angle += is_forward * speed_x * speed_perc * glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 
 		pos_x -= cos(angle) * car_speed * glfwGetTime();
 		pos_z += sin(angle) * car_speed * glfwGetTime();

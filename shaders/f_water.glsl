@@ -18,6 +18,9 @@ uniform vec3 viewPos;
 uniform sampler2D shadowMap;
 uniform mat4 lightSpaceMatrix;
 
+uniform vec3 fogColor;
+uniform float fogDensity; // e.g., 0.02 for light fog
+
 uniform vec3 pointLightPos;
 uniform vec3 pointLightColor;
 
@@ -89,6 +92,20 @@ void main() {
     finalColor = finalColor * clamp(waveFactor, 0.2, 1.0);
     //finalColor = mix(finalColor, vec3(0,0,1.0), 0.1);
     finalColor = finalColor * lighting;
+
+    // Calculate distance from fragment to camera
+    float distance = length(viewPos - geomPosition);
+
+    // Exponential fog factor
+    float fogStart = 200.0;
+    float fogEnd = 2000.0;
+    float fogFactor = clamp((distance - fogStart) / (fogEnd - fogStart), 0.0, 1.0);
+    fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+    // Blend scene color with fog
+    finalColor = mix(finalColor, fogColor, fogFactor);
+
+
     outColor = vec4(finalColor, 1.0);
     //outColor = vec4(specular, 1.0);
 }

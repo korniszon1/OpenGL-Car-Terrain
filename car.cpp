@@ -81,7 +81,7 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	if (disco) t += glfwGetTime() * 1;
 	if (t > 1) t = 0;
 	glUniform1f(sp->u("uTime"), t);
-	glm::vec3 lightDirection = glm::normalize(glm::vec3((float)(200 * 5) * 5, 100.0f, -(float)(200 * 5)*4));
+	glm::vec3 lightDirection = glm::normalize(glm::vec3((float)(200 * 5) * 8, 100.0f, -(float)(200 * 5)*4));
 	glUniform3fv(sp->u("lightDir"), 1, glm::value_ptr(lightDirection));
 
 	glm::vec3 cameraPos = glm::vec3(pos_x,pos_y,pos_z);
