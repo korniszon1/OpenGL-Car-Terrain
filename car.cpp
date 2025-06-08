@@ -28,7 +28,7 @@ void Car::drawWheel(ShaderProgram* sp, glm::mat4 M, glm::vec3 posInScene, float 
 	}
 }
 
-void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, float angle, float pos_x, float pos_y, float pos_z, float car_speed, glm::vec3 terrainNormal, bool disco)
+void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLuint& tex1, GLuint& tex2, float angle, float pos_x, float pos_y, float pos_z, float car_speed, glm::vec3 terrainNormal, bool disco)
 {
 	//TODO grawitacja
 	//if (y < pos_y + CarBase.center.y * 4) y = pos_y;
@@ -77,6 +77,10 @@ void Car::drawCar(ShaderProgram* sp, glm::mat4 V, glm::mat4 P, GLuint& tex0, GLu
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, tex1);
 	glUniform1i(sp->u("textureMap1"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, tex2);
+	glUniform1i(sp->u("textureMap2"), 2);
 
 	if (disco) t += glfwGetTime() * 1;
 	if (t > 1) t = 0;

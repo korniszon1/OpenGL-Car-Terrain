@@ -87,6 +87,7 @@ GLuint tex6;
 GLuint tex7;
 
 GLuint carTexture;
+GLuint carEmissionTexture;
 GLuint carTintAreaTexture;
 GLuint skyboxTexture;
 //GLuint skyboxVAO, skyboxVBO, cubemapTexture;
@@ -188,12 +189,12 @@ void windowResizeCallback(GLFWwindow* window,int width,int height) {
 }
 
 // trawa ustawienia -----------------------------------------
-const int grass = 10000;
+const int grass = 3000;
 std::vector<int> randomNumberX(grass);
 std::vector<int> randomNumberZ(grass);
 std::vector<int> randomNumberY(grass);
 std::vector<glm::mat4> modelMatrices(grass, glm::mat4(1.0f));
-const float maxDistance = 100.0f;
+const float maxDistance = 60.0f;
 // trawa ustawienia -----------------------------------------
 
 //Procedura inicjująca
@@ -222,6 +223,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	sp = mainSp;
 
 	carTexture = readTexture("models/car_texture.png");
+	carEmissionTexture = readTexture("models/car_emission.png");
 	carTintAreaTexture = readTexture("models/color_tint_area.png");
 
 	Car::CarBase = loadModel("models/car_base.obj");
@@ -268,8 +270,8 @@ void initOpenGLProgram(GLFWwindow* window) {
 		);
 
 		M = M * rotationMatrix;
-		M = glm::translate(M, glm::vec3(0, 7.0f, 0));
-		M = glm::scale(M, glm::vec3(8, 8, 8));
+		M = glm::translate(M, glm::vec3(0, 5.0f, 0));
+		M = glm::scale(M, glm::vec3(6, 6, 6));
 		modelMatrices[i] = M;
 	}
 }
@@ -283,6 +285,7 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &tex2);
 
 	glDeleteTextures(1, &carTexture);
+	glDeleteTextures(1, &carEmissionTexture);
 	glDeleteTextures(1, &carTintAreaTexture);
 
     delete mainSp;
@@ -310,7 +313,7 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 	camera->updateOrbit();
 	ocean.drawWater(waterSp, tex2, tex3, skyboxTexture, pos_x, pos_z, angle, view, projection, camera->getPos());
 
-	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
+	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, carEmissionTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
 	
 
 
