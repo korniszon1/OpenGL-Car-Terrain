@@ -266,13 +266,11 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
 	//camera->updateOrbit();
 	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, angle, view, projection, camera->getPos());
-<<<<<<< HEAD
 	camera->updateOrbit();
 	ocean.drawWater(waterSp, tex2, tex3, skyboxTexture, pos_x, pos_z, angle, view, projection, camera->getPos());
-	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z));
-=======
+
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
->>>>>>> f65a0ed2202dd14ba4eba1e7be46bad41b749dcb
+
 	
 	
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -334,12 +332,10 @@ int main(void)
 
 		camera->keyCallback(window);
 		samochod.keyCallback(window);
-<<<<<<< HEAD
-		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
-=======
-		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 1000.0f);
 
->>>>>>> f65a0ed2202dd14ba4eba1e7be46bad41b749dcb
+		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
+
+
 		//cam_pos += cam_pos_speed * cam_pos;
 		//cam_rot += glm::vec3(cam_rot_speed,0,0);
 
