@@ -1,57 +1,56 @@
 #include "grass.h"
 #include "quads.h"
 
-Grass::Grass(int minXZ, int maxXZ,int GC) 
-	:	_gen(_rd()), _dist(minXZ, maxXZ)
+Grass::Grass(int chunks_amount,int GC) : _CHUNKS(chunks_amount), _GRASS_COUNT(GC)
 {
-	_GRASS_COUNT = GC;
-	_randomNumberX.resize(GC);
-	_randomNumberZ.resize(GC);
-	_randomNumberY.resize(GC);
-	_modelMatrices.resize(GC, glm::mat4(1.0f));
-
-
+	gc = new GrassChunk[chunks_amount];
 }
 
-void Grass::init(Terrain &teren, GLuint &t0, GLuint &t0n, GLuint &t1, GLuint &t1n)
+void Grass::init(Terrain &teren, GLuint &t0, GLuint &t0n, GLuint &t1, GLuint &t1n, int CHUNK_SIZE)
 {
+
+	int sizeChunks = sqrt(_CHUNKS);
+	int offset = (1000 - (sizeChunks*CHUNK_SIZE))/2;
+
 	_tex0 = t0;
 	_tex0n = t0n;
-
 	_tex1 = t1;
 	_tex1n = t1n;
-
-	for (int i = 0; i < _GRASS_COUNT; i++)
+	printf("Generating chunks \n");
+	for (int i = 0; i < sizeChunks; i++)
 	{
-		glm::mat4 M = glm::mat4(1.0f);
-
-		_randomNumberX[i] = _dist(_gen);
-		_randomNumberZ[i] = _dist(_gen);
-		_randomNumberY[i] = teren.getHeight(_randomNumberX[i], _randomNumberZ[i]);
-
-		M = glm::translate(M, glm::vec3(_randomNumberX[i], _randomNumberY[i], _randomNumberZ[i]));
-		glm::vec3 terrainNormal = teren.getTerrainNormal(_randomNumberX[i], _randomNumberZ[i]);
-		glm::vec3 forward = glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)); // np. z systemu pojazdu
-
-		glm::vec3 right = glm::normalize(glm::cross(forward, terrainNormal));
-		glm::vec3 adjustedForward = glm::normalize(glm::cross(terrainNormal, right)); // poprawiony Z
-
-		glm::mat4 rotationMatrix = glm::mat4(
-			glm::vec4(right, 0.0),
-			glm::vec4(terrainNormal, 0.0),
-			glm::vec4(adjustedForward, 0.0),
-			glm::vec4(0.0, 0.0, 0.0, 1.0)
-		);
-
-		M = M * rotationMatrix;
-		M = glm::translate(M, glm::vec3(0, 5.0f, 0));
-		M = glm::scale(M, glm::vec3(6, 6, 6));
-		_modelMatrices[i] = M;
+		for (int j = 0; j < sizeChunks;j++)
+		{
+			gc[i * sizeChunks + j].generate(teren, offset + j * CHUNK_SIZE, offset + i * CHUNK_SIZE, _GRASS_COUNT, CHUNK_SIZE);
+		}
 	}
+	printf("Generating chunks: Done \n");
 }
 
-void Grass::drawGrass(ShaderProgram *sp,glm::vec3 cameraPos, int maxDistance)
+bool IsChunkInViewCone(
+	const glm::vec3& chunkCenter,
+	const glm::vec3& cameraPos,
+	const glm::vec3& cameraDir,
+	float fovDegrees,
+	float maxDistance,
+	int chunk_size)
 {
+	glm::vec3 toChunk = chunkCenter - cameraPos;
+	float distance = glm::length(toChunk);
+	if (distance > maxDistance) return false;
+	glm::vec3 dirToChunk = glm::normalize(toChunk);
+
+	float angleToChunk = glm::degrees(acos(glm::dot(dirToChunk, glm::normalize(cameraDir))));
+	return ( distance < chunk_size || angleToChunk < (fovDegrees / 2.0f));
+}
+
+
+void Grass::drawGrass(ShaderProgram *sp, Camera &camera, int maxDistance, int chunk_size)
+{
+	glm::vec3 cameraDir = glm::normalize(camera.getCameraFront());
+	glm::vec3 cameraRight = glm::normalize(glm::cross(cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+	glm::vec3 cameraUp = camera.getCameraUp();
+
 	sp->use();
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, qVertices);
@@ -65,36 +64,43 @@ void Grass::drawGrass(ShaderProgram *sp,glm::vec3 cameraPos, int maxDistance)
 	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, qTexCoords);
 	glUniform1i(sp->u("textureMap0"), 0);
 	glUniform1i(sp->u("textureMap1"), 1);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, tex6);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, tex7);
-	
-	for (int i = 0; i < _GRASS_COUNT; i++)
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _tex0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _tex0n);
+
+	int p = _GRASS_COUNT * _GRASS_COUNT * _CHUNKS;
+	for (int i = 0; i < _CHUNKS; i++)
 	{
-		float distance = glm::distance(cameraPos, glm::vec3(_modelMatrices[i][3]));
+		if (!IsChunkInViewCone(glm::vec3(gc[i].center), camera.getPos(), camera.getCameraFront(), 160.0f, maxDistance, chunk_size))
+			continue;
 
-		//Random teksturka
-		if ((_randomNumberX[i] * _randomNumberZ[i]) % (int)(_GRASS_COUNT / 1.5) == 0)
+		for (int j = 0; j < _GRASS_COUNT * _GRASS_COUNT; j++)
 		{
+			//Prawdopodobienstwo drzewa
+			if (i < _CHUNKS -1 && j * i % (int)(p / 1.2f) == 0)
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, _tex1);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, _tex1n);
+			}
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _tex1);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, _tex1n);
-		}
-		else
-		{
-			if (distance > maxDistance)
-				continue;
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _tex0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, _tex0n);
-		}
 
-		glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(_modelMatrices[i]));
-		glDrawArrays(GL_TRIANGLES, 0, qVertexCount);
+
+			glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(gc[i].modelMatrices[j]));
+			glDrawArrays(GL_TRIANGLES, 0, qVertexCount);
+
+			if (j * i % (int)(p / 1.2f) == 0) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, _tex0);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, _tex0n);
+			}
+		}
+		
+		
 	}
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("color"));

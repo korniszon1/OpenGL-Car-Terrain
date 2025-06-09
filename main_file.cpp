@@ -30,6 +30,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <stdio.h>
 #include "constants.h"
 #include "shaderprogram.h"
+#include <chrono>
+#include <cstdio>
 #include "utils.h"
 
 //#include "model.h"
@@ -60,12 +62,10 @@ Skybox skybox;
 Water ocean;
 
 // trawa ustawienia -----------------------------------------
-const int grassCount = 3000;
-const int minCoord = 300;
-const int maxCoord = 700;
-const float maxRenderDistance = 60.0f;
-
-Grass plants(minCoord, maxCoord, grassCount);
+const int grassCount = 20;
+const float maxRenderDistance = 100.0f;
+const int chunkSize = 32;
+Grass plants(200, grassCount);
 // trawa ustawienia -----------------------------------------
 
 // --- resources ---
@@ -180,7 +180,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	skyboxTexture = loadCubemap(faces);
 	skybox.initSkybox();
-	plants.init(teren, tex4, tex5, tex6, tex7);
+
+	plants.init(teren,tex4,tex5,tex6,tex7,chunkSize);
+
 }
 
 
@@ -203,6 +205,8 @@ void freeOpenGLProgram(GLFWwindow* window) {
     delete mainSp;
 	delete wireSp;
 	delete discoCarSp;
+	delete skyboxShader;
+	delete waterSp;
 }
 
 
@@ -220,15 +224,15 @@ void drawScene(GLFWwindow* window, Camera *camera) {
 
 	//Skybox musi renderowac sie pierwszy
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
-	camera->target = carPos;
 	teren.drawTerrain(sp, tex0, tex1, carPos.x, carPos.z, carAngle, view, projection, camera->getPos());
-	camera->updateOrbit();
 	ocean.drawWater(waterSp, tex2, tex3, skyboxTexture, carPos.x, carPos.z, carAngle, view, projection, camera->getPos());
 
-	/*glm::vec3 carPos = glm::vec3(carPos.x, teren.getHeight(carPos.x, carPos.z), carPos.z);*/
 	samochod.drawCar(discoCarSp, view, projection);
+
+	camera->target = carPos;
+	camera->updateOrbit();
 	
-	plants.drawGrass(sp, cameraPos, maxRenderDistance);
+	plants.drawGrass(sp, *camera, maxRenderDistance, chunkSize);
 	
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
@@ -266,10 +270,34 @@ int main(void)
 
 	//Główna pętla
 	samochod.setPos(glm::vec3(500, 500, 500));
+
 	glfwSetTime(0); //Zeruj timer
+	glfwSwapInterval(0); //wylaczony vsync
+
+	using clock = std::chrono::high_resolution_clock;
+
+	auto lastTime = clock::now();
+	int frameCount = 0;
+	double fpsTimer = 0.0;
+	char buffer[128];
 
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
+		auto currentTime = clock::now();
+		std::chrono::duration<double> elapsed = currentTime - lastTime;
+		lastTime = currentTime;
+		double deltaTime = elapsed.count();
+
+		fpsTimer += deltaTime;
+		frameCount++;
+
+		if (fpsTimer >= 1.0) {
+			std::snprintf(buffer, sizeof(buffer), "FPS: %.2f", frameCount / fpsTimer);
+			glfwSetWindowTitle(window, buffer);
+			frameCount = 0;
+			fpsTimer = 0.0;
+		}
+
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
 
 		//cam_pos += cam_pos_speed * cam_pos;

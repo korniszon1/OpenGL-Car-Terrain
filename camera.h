@@ -40,6 +40,8 @@ public:
 	glm::mat4 getCameraView();
 	glm::mat4 getCameraProj();
 	glm::vec3 getPos();
+	glm::vec3 getCameraFront();
+	glm::vec3 getCameraUp();
 	void updateOrbit();
 	~Camera();
 
