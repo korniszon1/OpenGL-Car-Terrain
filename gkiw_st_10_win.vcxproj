@@ -22,10 +22,12 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="grass.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="lodepng.h" />
     <ClInclude Include="model_loader.h" />
     <ClInclude Include="PerlinNoise.hpp" />
+    <ClInclude Include="quads.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="myCube.h" />
     <ClInclude Include="myTeapot.h" />
@@ -38,6 +40,7 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="car.cpp" />
+    <ClCompile Include="grass.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="model_loader.cpp" />

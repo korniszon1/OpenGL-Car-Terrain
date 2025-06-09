@@ -31,7 +31,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-#include "myCube.h"
+
 //#include "model.h"
 //#include "cube.h"
 #include <random>
@@ -41,6 +41,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "model_loader.h"
 #include "skybox.h"
 #include "water.h"
+#include "grass.h"
 
 float speed_x=0;
 float car_speed =0;
@@ -65,16 +66,23 @@ Car samochod;
 Skybox skybox;
 Water ocean;
 
+
+// trawa ustawienia -----------------------------------------
+const int grassCount = 3000;
+const int minCoord = 300;
+const int maxCoord = 700;
+const float maxRenderDistance = 60.0f;
+
+Grass plants(minCoord, maxCoord, grassCount);
+// trawa ustawienia -----------------------------------------
+
+
+
+
 ShaderProgram *mainSp;
 ShaderProgram *wireSp;
 ShaderProgram *discoCarSp;
 
-//Parametry trawy
-float* vertices = myCubeVertices;
-float* normals = myCubeNormals;
-float* texCoords = myCubeTexCoords;
-float* colors = myCubeColors;
-int vertexCount = myCubeVertexCount;
 
 
 GLuint tex0;
@@ -188,14 +196,6 @@ void windowResizeCallback(GLFWwindow* window,int width,int height) {
     glViewport(0,0,width,height);
 }
 
-// trawa ustawienia -----------------------------------------
-const int grass = 3000;
-std::vector<int> randomNumberX(grass);
-std::vector<int> randomNumberZ(grass);
-std::vector<int> randomNumberY(grass);
-std::vector<glm::mat4> modelMatrices(grass, glm::mat4(1.0f));
-const float maxDistance = 60.0f;
-// trawa ustawienia -----------------------------------------
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
@@ -219,7 +219,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	discoCarSp = new ShaderProgram("shaders/v_simplest.glsl", NULL, "shaders/f_car_disco.glsl");
 	skyboxShader = new ShaderProgram("shaders/v_skybox.glsl", NULL, "shaders/f_skybox.glsl");
 	waterSp = new ShaderProgram("shaders/v_water.glsl", "shaders/g_water.glsl", "shaders/f_water.glsl");
-	//shadowSp = new ShaderProgram("shaders/v_shadow.glsl", NULL, "shaders/f_shadow.glsl");
+
 	sp = mainSp;
 
 	carTexture = readTexture("models/car_texture.png");
@@ -241,39 +241,9 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	skybox.initSkybox();
 
-	//trawa init
-	std::random_device rd;                            
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(300, 700);
+	plants.init(teren,tex4,tex5,tex6,tex7);
 
-	for (int i = 0; i < grass; i++)
-	{
-		//if (i % (grass/100)) printf("%f%\n", (float)i/grass * 100);
-		glm::mat4 M = glm::mat4(1.0f);
-
-		randomNumberX[i] = dist(gen);
-		randomNumberZ[i] = dist(gen);
-		randomNumberY[i] = teren.getHeight(randomNumberX[i], randomNumberZ[i]);
-		
-		M = glm::translate(M, glm::vec3(randomNumberX[i], randomNumberY[i], randomNumberZ[i]));
-		glm::vec3 terrainNormal = teren.getTerrainNormal(randomNumberX[i], randomNumberZ[i]);
-		glm::vec3 forward = glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)); // np. z systemu pojazdu
-
-		glm::vec3 right = glm::normalize(glm::cross(forward, terrainNormal));
-		glm::vec3 adjustedForward = glm::normalize(glm::cross(terrainNormal, right)); // poprawiony Z
-
-		glm::mat4 rotationMatrix = glm::mat4(
-			glm::vec4(right, 0.0),
-			glm::vec4(terrainNormal, 0.0),
-			glm::vec4(adjustedForward, 0.0),
-			glm::vec4(0.0, 0.0, 0.0, 1.0)
-		);
-
-		M = M * rotationMatrix;
-		M = glm::translate(M, glm::vec3(0, 5.0f, 0));
-		M = glm::scale(M, glm::vec3(6, 6, 6));
-		modelMatrices[i] = M;
-	}
+	
 }
 
 
@@ -304,6 +274,7 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 
 	glm::mat4 projection = camera->getCameraProj();
 	glm::mat4 view = camera->getCameraView();
+	glm::vec3 cameraPos = camera->getPos();
 
 	//Skybox musi renderowac sie pierwszy
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
@@ -315,58 +286,8 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, carEmissionTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
 	
-
-
-	//trawa render
-	sp->use();
-	glEnableVertexAttribArray(sp->a("vertex"));
-	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices);
-
-	glEnableVertexAttribArray(sp->a("normal"));
-	glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, normals);
-
-	glEnableVertexAttribArray(sp->a("texCoord0"));
-	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords);
-	glEnableVertexAttribArray(sp->a("texCoord1"));
-	glVertexAttribPointer(sp->a("texCoord1"), 2, GL_FLOAT, false, 0, texCoords);
-	glUniform1i(sp->u("textureMap0"), 0);
-	glUniform1i(sp->u("textureMap1"), 1);
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, tex6);
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, tex7);
-	glm::vec3 cameraPos = camera->getPos();
-	for (int i = 0; i < grass; i++)
-	{
-		float distance = glm::distance(cameraPos, glm::vec3(modelMatrices[i][3]));
-		
-		//Random teksturka
-		if ((randomNumberX[i] * randomNumberZ[i]) % (int)(grass/1.5) == 0)
-		{
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, tex6);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, tex7);
-		}
-		else
-		{
-			if (distance > maxDistance)
-				continue;
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, tex4);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, tex5);
-		}
-
-		glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(modelMatrices[i]));
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-	}
-	glDisableVertexAttribArray(sp->a("vertex"));
-	glDisableVertexAttribArray(sp->a("color"));
-	glDisableVertexAttribArray(sp->a("normal"));
-	glDisableVertexAttribArray(sp->a("texCoord0"));
-	//koniec trawy
+	
+	plants.drawGrass(sp, cameraPos, maxRenderDistance);
 	
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

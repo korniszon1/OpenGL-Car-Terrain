@@ -60,6 +60,12 @@
     <ClInclude Include="water.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="grass.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="quads.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">
@@ -88,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="water.cpp">
       <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="grass.cpp">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
