@@ -62,10 +62,10 @@ Skybox skybox;
 Water ocean;
 
 // trawa ustawienia -----------------------------------------
-const int grassCount = 20;
+const int grassCount = 10;
 const float maxRenderDistance = 100.0f;
-const int chunkSize = 32;
-Grass plants(200, grassCount);
+const int chunkSize = 16;
+Grass plants(800, grassCount);
 // trawa ustawienia -----------------------------------------
 
 // --- resources ---
@@ -299,9 +299,6 @@ int main(void)
 		}
 
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
-
-		//cam_pos += cam_pos_speed * cam_pos;
-		//cam_rot += glm::vec3(cam_rot_speed,0,0);
 
 		samochod.updateCar(glfwGetTime(), teren);
 

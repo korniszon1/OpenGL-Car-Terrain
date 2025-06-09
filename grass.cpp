@@ -41,7 +41,7 @@ bool IsChunkInViewCone(
 	glm::vec3 dirToChunk = glm::normalize(toChunk);
 
 	float angleToChunk = glm::degrees(acos(glm::dot(dirToChunk, glm::normalize(cameraDir))));
-	return ( distance < chunk_size || angleToChunk < (fovDegrees / 2.0f));
+	return ( distance < chunk_size * 2 || angleToChunk < (fovDegrees / 2.0f));
 }
 
 
@@ -73,20 +73,25 @@ void Grass::drawGrass(ShaderProgram *sp, Camera &camera, int maxDistance, int ch
 	int p = _GRASS_COUNT * _GRASS_COUNT * _CHUNKS;
 	for (int i = 0; i < _CHUNKS; i++)
 	{
-		if (!IsChunkInViewCone(glm::vec3(gc[i].center), camera.getPos(), camera.getCameraFront(), 160.0f, maxDistance, chunk_size))
+		if (!IsChunkInViewCone(glm::vec3(gc[i].center), camera.getPos(), camera.getCameraFront(), 90.0f, maxDistance, chunk_size))
 			continue;
 
 		for (int j = 0; j < _GRASS_COUNT * _GRASS_COUNT; j++)
 		{
 			//Prawdopodobienstwo drzewa
-			if (i < _CHUNKS -1 && j * i % (int)(p / 1.2f) == 0)
+			if (i % 10 == 0 && i < _CHUNKS - 1 && j % p == 0)
 			{
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, _tex1);
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, _tex1n);
 			}
-
+			else
+			{
+				float distance = glm::distance(camera.getPos(), glm::vec3(gc[i].modelMatrices[j][3]));
+				if (distance > maxDistance / 4 && j % 2 == 0) continue;
+				if (distance > maxDistance / 2 && j % 8 == 0) continue;
+			}
 
 
 			glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(gc[i].modelMatrices[j]));
