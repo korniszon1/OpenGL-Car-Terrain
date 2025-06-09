@@ -31,7 +31,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-
+#include <chrono>
+#include <cstdio>
 //#include "model.h"
 //#include "cube.h"
 #include <random>
@@ -68,12 +69,10 @@ Water ocean;
 
 
 // trawa ustawienia -----------------------------------------
-const int grassCount = 3000;
-const int minCoord = 300;
-const int maxCoord = 700;
-const float maxRenderDistance = 60.0f;
-
-Grass plants(minCoord, maxCoord, grassCount);
+const int grassCount = 20;
+const float maxRenderDistance = 100.0f;
+const int chunkSize = 32;
+Grass plants(200, grassCount);
 // trawa ustawienia -----------------------------------------
 
 
@@ -241,7 +240,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	skybox.initSkybox();
 
-	plants.init(teren,tex4,tex5,tex6,tex7);
+	plants.init(teren,tex4,tex5,tex6,tex7,chunkSize);
 
 	
 }
@@ -253,6 +252,11 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1, &tex0);
 	glDeleteTextures(1, &tex1);
 	glDeleteTextures(1, &tex2);
+	glDeleteTextures(1, &tex3);
+	glDeleteTextures(1, &tex4);
+	glDeleteTextures(1, &tex5);
+	glDeleteTextures(1, &tex6);
+	glDeleteTextures(1, &tex7);
 
 	glDeleteTextures(1, &carTexture);
 	glDeleteTextures(1, &carEmissionTexture);
@@ -261,13 +265,14 @@ void freeOpenGLProgram(GLFWwindow* window) {
     delete mainSp;
 	delete wireSp;
 	delete discoCarSp;
+	delete skyboxShader;
+	delete waterSp;
 }
 
 
 
 
 //Procedura rysująca zawartość sceny
-
 void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float car_speed, Camera *camera) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -278,16 +283,17 @@ void drawScene(GLFWwindow* window,float angle, float pos_x, float pos_z, float c
 
 	//Skybox musi renderowac sie pierwszy
 	skybox.drawSkybox(skyboxShader, skyboxTexture, view, projection);
-	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
-	//camera->updateOrbit();
+	
 	teren.drawTerrain(sp, tex0, tex1, pos_x, pos_z, angle, view, projection, camera->getPos());
-	camera->updateOrbit();
+	
 	ocean.drawWater(waterSp, tex2, tex3, skyboxTexture, pos_x, pos_z, angle, view, projection, camera->getPos());
 
 	samochod.drawCar(discoCarSp, view, projection, carTexture, carTintAreaTexture, carEmissionTexture, angle, pos_x, teren.getHeight(pos_x, pos_z), pos_z, car_speed, teren.getTerrainNormal(pos_x, pos_z), disco);
 	
-	
-	plants.drawGrass(sp, cameraPos, maxRenderDistance);
+	camera->target = glm::vec3(pos_x, samochod.getCameraPos().y, pos_z);
+	camera->updateOrbit();
+
+	plants.drawGrass(sp, *camera, maxRenderDistance, chunkSize);
 	
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }
@@ -323,15 +329,39 @@ int main(void)
 
 	initOpenGLProgram(window); //Operacje inicjujące
 
-	//Główna pętla
 	float angle=0;
 
 	float pos_x = 500;
 	float pos_z = 500;
 	glfwSetTime(0); //Zeruj timer
+	glfwSwapInterval(0); //wylaczony vsync
 
+
+	using clock = std::chrono::high_resolution_clock;
+
+	auto lastTime = clock::now();
+	int frameCount = 0;
+	double fpsTimer = 0.0;
+	char buffer[128];
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
+		auto currentTime = clock::now();
+		std::chrono::duration<double> elapsed = currentTime - lastTime;
+		lastTime = currentTime;
+		double deltaTime = elapsed.count();
+
+		fpsTimer += deltaTime;
+		frameCount++;
+
+		if (fpsTimer >= 1.0) {
+			
+			
+			std::snprintf(buffer, sizeof(buffer), "FPS: %.2f", frameCount / fpsTimer);
+			glfwSetWindowTitle(window, buffer);
+			frameCount = 0;
+			fpsTimer = 0.0;
+		}
+
 		if (car_acce == 0.0f) {
 			car_speed *= drag; 
 			if (car_speed < 0.01f) car_speed = 0.0f;
@@ -340,7 +370,6 @@ int main(void)
 		car_speed = glm::clamp(car_speed, -2.0f, 30.0f);
 		float speed_perc = glm::min(abs(car_speed > 0.0f ? car_speed / 10.0f : car_speed / 5.0f), 1.0f);
 		
-        //angle+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 		angle += is_forward * speed_x * speed_perc * glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
 
 		pos_x -= cos(angle) * car_speed * glfwGetTime();
@@ -351,10 +380,8 @@ int main(void)
 
 		camera->update_camera(50.0f, aspectRatio, sp, 0.01f, 2000.0f);
 
-
-		//cam_pos += cam_pos_speed * cam_pos;
-		//cam_rot += glm::vec3(cam_rot_speed,0,0);
-
+		
+		
         glfwSetTime(0); //Zeruj timer
 		drawScene(window,angle, pos_x, pos_z, car_speed, camera); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.

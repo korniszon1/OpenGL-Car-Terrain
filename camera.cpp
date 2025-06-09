@@ -98,3 +98,5 @@ void Camera::updateOrbit() {
 glm::vec3 Camera::getPos() { return position; }
 glm::mat4 Camera::getCameraView() { return V;}
 glm::mat4 Camera::getCameraProj() { return P; }
+glm::vec3 Camera::getCameraUp() { return up; }
+glm::vec3 Camera::getCameraFront(){return glm::normalize(rotation);}
