@@ -35,6 +35,7 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
     <ClInclude Include="terrain.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="water.h" />
   </ItemGroup>
   <ItemGroup>
