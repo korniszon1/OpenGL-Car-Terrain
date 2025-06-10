@@ -62,7 +62,7 @@ Skybox skybox;
 Water ocean;
 
 // trawa ustawienia -----------------------------------------
-const int grassCount = 10;
+const int grassCount = 5;
 const float maxRenderDistance = 100.0f;
 const int chunkSize = 16;
 Grass plants(800, grassCount);

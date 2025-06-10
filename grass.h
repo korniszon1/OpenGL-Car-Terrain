@@ -86,5 +86,3 @@ public:
 	void init(Terrain& teren, GLuint& t0, GLuint& t0n, GLuint& t1, GLuint& t1n, int CHUNK_SIZE);
 	void drawGrass(ShaderProgram* sp, Camera &camera, int maxDistance, int chunk_size);
 };
-
-

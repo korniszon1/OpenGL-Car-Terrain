@@ -104,8 +104,6 @@ void Grass::drawGrass(ShaderProgram *sp, Camera &camera, int maxDistance, int ch
 				glBindTexture(GL_TEXTURE_2D, _tex0n);
 			}
 		}
-		
-		
 	}
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("color"));

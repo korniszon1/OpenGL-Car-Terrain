@@ -129,6 +129,8 @@ void Car::updateCar(double t, Terrain& teren) {
 	M = M * rotationMatrix;
 
 	M = glm::translate(M, glm::vec3(-CarBase.center.x, -(CarBase.center.y + CarWheel.center.y * 2), -CarBase.center.z));
+
+	if (disco) disco_t += t / 5;
 }
 
 void Car::keyCallback(GLFWwindow* window) {

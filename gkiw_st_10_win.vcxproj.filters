@@ -146,4 +146,7 @@
       <Filter>Pliki zasobów</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="assimp-vc143-mt.dll" />
+  </ItemGroup>
 </Project>
